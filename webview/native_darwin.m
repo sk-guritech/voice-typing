@@ -63,26 +63,32 @@ static void installMediaDelegate(NSWindow *window) {
 }
 
 static void requestPastePermission(void) {
-    if (!CGPreflightPostEventAccess()) {
-        CGRequestPostEventAccess();
+    if (!CGPreflightPostEventAccess() && !CGRequestPostEventAccess()) {
+        NSURL *pane = [NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"];
+        [NSWorkspace.sharedWorkspace openURL:pane];
     }
 }
 
 static void showPermissionSetup(bool english) {
-    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    NSString *setupShown = @"VoiceTypingPermissionSetupShown";
     AVAuthorizationStatus microphone = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
-    if ([defaults boolForKey:setupShown] ||
-        (microphone == AVAuthorizationStatusAuthorized && CGPreflightPostEventAccess())) {
+    bool needsMicrophone = microphone != AVAuthorizationStatusAuthorized;
+    bool needsAccessibility = !CGPreflightPostEventAccess();
+    if (!needsMicrophone && !needsAccessibility) {
         return;
     }
-    [defaults setBool:YES forKey:setupShown];
+
+    NSMutableArray<NSString *> *instructions = [NSMutableArray array];
+    if (needsMicrophone) {
+        [instructions addObject:english ? @"Allow Microphone for dictation." : @"音声入力には「マイク」を許可してください。"];
+    }
+    if (needsAccessibility) {
+        [instructions addObject:english ? @"Allow Accessibility for automatic pasting." : @"自動貼り付けには「アクセシビリティ」を許可してください。"];
+    }
+    [instructions addObject:english ? @"Then quit and reopen Voice Typing." : @"許可したら、Voice Typing を終了して開き直してください。"];
 
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = english ? @"Set up Voice Typing" : @"Voice Typing の初回設定";
-    alert.informativeText = english
-        ? @"Allow Microphone for dictation and Accessibility for automatic pasting. After allowing both, quit and reopen Voice Typing."
-        : @"音声入力には「マイク」、自動貼り付けには「アクセシビリティ」を許可してください。両方を許可したら、Voice Typing を終了して開き直してください。";
+    alert.messageText = english ? @"Voice Typing permissions" : @"Voice Typing の権限設定";
+    alert.informativeText = [instructions componentsJoinedByString:@"\n"];
     [alert addButtonWithTitle:english ? @"Set up permissions" : @"権限を設定"];
     [alert addButtonWithTitle:english ? @"Later" : @"あとで"];
     NSModalResponse response = [alert runModal];
@@ -92,9 +98,14 @@ static void showPermissionSetup(bool english) {
     }
     if (microphone == AVAuthorizationStatusNotDetermined) {
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {
-            dispatch_async(dispatch_get_main_queue(), ^{ requestPastePermission(); });
+            if (needsAccessibility) {
+                dispatch_async(dispatch_get_main_queue(), ^{ requestPastePermission(); });
+            }
         }];
-    } else {
+    } else if (needsMicrophone) {
+        NSURL *pane = [NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone"];
+        [NSWorkspace.sharedWorkspace openURL:pane];
+    } else if (needsAccessibility) {
         requestPastePermission();
     }
 }
