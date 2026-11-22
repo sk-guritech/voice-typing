@@ -8,20 +8,18 @@
 <p align="center">Soniox または OpenAI を使える、小さなデスクトップパネル。</p>
 
 <p align="center">
-  <a href="#起動">起動</a> · <a href="#準備">準備</a> · <a href="#使い方">3ステップで使う</a> · <a href="README.md">English</a>
+  <a href="#ダウンロードと起動">ダウンロード</a> · <a href="#準備">準備</a> · <a href="#使い方">3ステップで使う</a> · <a href="README.md">English</a>
 </p>
 
-## 起動
+## ダウンロードと起動
 
-下の手順でビルドすると、配布ファイルが [`release/`](release/) に入ります。
+お使いの OS 向けの v1.0.0 をダウンロードして起動し、歯車から API キーを設定します。[GitHub Releases](https://github.com/sk-guritech/voice-typing/releases/tag/v1.0.0)
 
-| OS | 必要な環境 | 起動方法 | 実環境での動作確認 |
+| OS | ダウンロード | 起動方法 | 実環境での動作確認 |
 | --- | --- | --- | --- |
-| Windows x64 | WebView2 Runtime | `.exe` を起動します。 | ○ 確認済み |
-| Linux x64 | GTK 3、WebKitGTK 4.1 | `.tar.gz` を展開し、`voice-typing` を起動します。 | × 未確認（Ubuntu コンテナで確認済み） |
-| macOS（Apple Silicon / Intel） | macOS 13 以降 | ZIP を展開し、`Voice Typing.app` を開きます。 | × Mac 実機で未確認 |
-
-macOS 版はアドホック署名済みです。
+| Windows x64 | [EXE](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-x64.exe) | ファイルをダブルクリックします。 | ○ 確認済み |
+| Linux x64 | [AppImage](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-linux-x64.AppImage) | ファイルのプロパティで実行を許可してから開きます。 | × 未確認 |
+| macOS | [Apple Silicon 用 ZIP](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-mac-arm64.zip) / [Intel 用 ZIP](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-mac-x64.zip) | ZIP を展開して `Voice Typing.app` を開きます。 | × Mac 実機で未確認 |
 
 ## 準備
 
@@ -32,9 +30,11 @@ macOS 版はアドホック署名済みです。
 
 ## 使い方
 
-1. **設定する。** 歯車を開き、Soniox または OpenAI の API キーを入力して**保存**します。**表示言語**は選んだ時点で切り替わります。ショートカットと前面表示もここで変更できます。
+1. **設定する。** 歯車を開き、Soniox または OpenAI の API キーを入力して**保存**します。ショートカットと前面表示もここで変更できます。
 
    <img src="docs/settings.png" width="280" alt="Voice Typing の設定画面">
+
+   画像は `main` の軽量版です。軽量版では **表示言語** を選ぶとすぐに切り替わります。
 
 2. **話す。** Windows は入力欄にカーソルを置き、Linux・macOS はパネルにフォーカスを置きます。<kbd>Page Down</kbd> を押し、青い波形が動いたら話します。
 
@@ -47,12 +47,12 @@ macOS 版はアドホック署名済みです。
 OS、アプリのバージョン、問題が起きた手順と結果を書いてください。画像やログを添える場合は、API キーや個人情報を消してください。[GitHub でイシューを作る](https://github.com/sk-guritech/voice-typing/issues/new)
 
 <details>
-<summary>ローカルビルド</summary>
+<summary>開発者向けの軽量版ビルド手順</summary>
 
 Go 1.27.4 で `webview/` から実行します。
 
-- **Windows** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-1.1.0-windows-x64.exe .`
-- **Linux（Bash）** — `docker build -t voice-typing:linux .` の後、`docker run --rm voice-typing:linux tar -cz -C /usr/local/bin voice-typing > ../release/Voice-Typing-1.1.0-linux-x64.tar.gz` を実行します。
-- **macOS** — Apple のコマンドラインツールが入った Mac で `bash build-macos.sh`。
+- **Windows（WebView2 Runtime）** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-1.1.0-windows-x64.exe .`
+- **Linux（GTK 3、WebKitGTK 4.1。Ubuntu コンテナで確認済み）** — Bash で `docker build -t voice-typing:linux .` の後、`docker run --rm voice-typing:linux tar -cz -C /usr/local/bin voice-typing > ../release/Voice-Typing-1.1.0-linux-x64.tar.gz` を実行します。
+- **macOS（macOS 13 以降）** — Apple のコマンドラインツールが入った Mac で `bash build-macos.sh`。
 
 </details>
