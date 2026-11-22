@@ -4,8 +4,8 @@
 
 <h1 align="center">Voice Typing</h1>
 
-<p align="center"><strong>A small desktop panel for voice typing.</strong></p>
-<p align="center">Use a shortcut to dictate with Soniox or OpenAI.</p>
+<p align="center"><strong>Type with your voice using a single shortcut.</strong></p>
+<p align="center">A small desktop panel powered by Soniox or OpenAI.</p>
 
 <p align="center">
   <a href="#run">Run the app</a> · <a href="#get-an-api-key">Get an API key</a> · <a href="#quick-start">Quick start</a> · <a href="README.ja.md">日本語</a>
@@ -36,11 +36,11 @@ Create a key for the speech recognition service you want to use.
 
    <img src="docs/settings.png" width="280" alt="Voice Typing settings">
 
-2. **Record.** On Windows, put the cursor where you want the text. On Linux and macOS, focus the panel. Press <kbd>Page Down</kbd> and speak when the blue waveform moves.
+2. **Speak.** On Windows, put the cursor where you want the text. On Linux and macOS, focus the panel. Press <kbd>Page Down</kbd> and speak when the blue waveform moves.
 
-   <img src="docs/recording.png" width="170" alt="Blue waveform during recording">
+   <img src="docs/recording.png" width="170" alt="Blue waveform while dictating">
 
-3. **Get the text.** Press <kbd>Page Down</kbd> again. When recording starts with the shortcut on Windows, the result is pasted into the original field if it still has focus. You can also paste the result from your clipboard.
+3. **Enter the text.** Press <kbd>Page Down</kbd> again to turn your speech into text. On Windows, the text is pasted into the original field if it still has focus. You can also paste it from your clipboard.
 
 ## Report a problem
 
