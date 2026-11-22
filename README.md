@@ -36,9 +36,9 @@ Download the file for your computer, open it, and set up an API key in the gear 
 
 ## Quick start
 
-1. **Set up.** Open the gear, choose Soniox or OpenAI, enter the API key, and click **Save** (保存). The gear also lets you change the shortcut and keep the panel on top.
+1. **Set up.** Click the gear to open **Settings**. If the panel opens in Japanese, set **Language** (表示言語) to **English**. Choose Soniox or OpenAI under **Service**, enter your **API key**, and click **Save**.
 
-   <img src="docs/settings.png" width="280" alt="Voice Typing settings">
+   <img src="docs/settings-en.png" width="280" alt="Voice Typing Settings in English">
 
 2. **Speak.** On Windows, put the cursor where you want the text. On Linux and macOS, focus the panel. Press <kbd>Page Down</kbd> and speak when the blue waveform moves.
 
