@@ -42,6 +42,12 @@
 
 3. **文字を入力する。** <kbd>Page Down</kbd> をもう一度押すと、話した内容が入力されます（Linux と macOS ではクリップボードにコピーされます）。
 
+### macOSの権限
+
+**システム設定 → プライバシーとセキュリティ** で、音声入力に必要な **マイク** を許可します。自動貼り付けに対応したmacOS版では、**アクセシビリティ** も許可します。許可したら Voice Typing を開き直してください。
+
+簡易署名のビルドを差し替えて自動貼り付けが動かなくなったら、**アクセシビリティ** から古い Voice Typing の項目を削除し、現在の `Voice Typing.app` を追加して開き直します。[Appleのアクセシビリティ設定ガイド](https://support.apple.com/ja-jp/guide/mac-help/mh43185/mac)
+
 ## モデルと料金
 
 料金は音声 1 時間あたりの米ドルです（2026 年 11 月確認）。トークン課金のモデルは目安です。[Soniox の料金](https://soniox.com/pricing#speech-to-text-api-pricing) · [OpenAI の料金](https://platform.openai.com/pricing)

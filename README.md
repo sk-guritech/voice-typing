@@ -42,6 +42,12 @@ Download the file for your computer, open it, and set up an API key in the gear 
 
 3. **Enter the text.** Press <kbd>Page Down</kbd> again to enter what you said (Linux and macOS copy it to the clipboard).
 
+### macOS permissions
+
+In **System Settings → Privacy & Security**, allow **Microphone** for dictation. For macOS builds with automatic pasting, also allow **Accessibility**. Reopen Voice Typing after granting access.
+
+If automatic pasting stops after replacing an ad hoc-signed build, remove the old Voice Typing entry from **Accessibility**, add the current `Voice Typing.app`, and reopen it. [Apple's Accessibility guide](https://support.apple.com/guide/mac-help/allow-accessibility-apps-to-access-your-mac-mh43185/mac)
+
 ## Models and pricing
 
 Prices are in US dollars per hour of audio, checked in November 2026. Rates for token-billed models are estimates. [Soniox pricing](https://soniox.com/pricing#speech-to-text-api-pricing) · [OpenAI pricing](https://platform.openai.com/pricing)

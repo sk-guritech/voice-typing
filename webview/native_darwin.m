@@ -169,9 +169,87 @@ static void onMainThread(dispatch_block_t block) {
     }
 }
 
-bool voicePlaceMacPanel(int width, int height, bool startup, bool setupPermissions, bool english) {
+@interface VoiceTypingMouseRegion : NSObject {
+    NSWindow *_window;
+    NSSize _size;
+    id _globalMonitor;
+    id _localMonitor;
+}
+- (instancetype)initWithWindow:(NSWindow *)window;
+- (void)setWidth:(int)width height:(int)height;
+- (void)updateAtPoint:(NSPoint)point;
+@end
+
+@implementation VoiceTypingMouseRegion
+
+- (instancetype)initWithWindow:(NSWindow *)window {
+    self = [super init];
+    if (self == nil) {
+        return nil;
+    }
+    _window = window;
+    // Mouse movement only. Leave input events untouched and update hit testing on boundary crossings.
+    NSEventMask events = NSEventMaskMouseMoved | NSEventMaskLeftMouseUp;
+    __block VoiceTypingMouseRegion *region = self;
+    _globalMonitor = [NSEvent addGlobalMonitorForEventsMatchingMask:events handler:^(NSEvent *event) {
+        [region updateAtPoint:NSEvent.mouseLocation];
+    }];
+    _localMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:events handler:^NSEvent *(NSEvent *event) {
+        [region updateAtPoint:NSEvent.mouseLocation];
+        return event;
+    }];
+    if (_globalMonitor == nil || _localMonitor == nil) {
+        [self release];
+        return nil;
+    }
+    window.acceptsMouseMovedEvents = YES;
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(windowWillClose:)
+        name:NSWindowWillCloseNotification object:window];
+    return self;
+}
+
+- (void)stopMonitoring {
+    if (_globalMonitor != nil) {
+        [NSEvent removeMonitor:_globalMonitor];
+        _globalMonitor = nil;
+    }
+    if (_localMonitor != nil) {
+        [NSEvent removeMonitor:_localMonitor];
+        _localMonitor = nil;
+    }
+}
+
+- (void)windowWillClose:(NSNotification *)notification {
+    [self stopMonitoring];
+}
+
+- (void)dealloc {
+    [self stopMonitoring];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+    [super dealloc];
+}
+
+- (void)setWidth:(int)width height:(int)height {
+    _size = NSMakeSize(width, height);
+    [self updateAtPoint:NSEvent.mouseLocation];
+}
+
+- (void)updateAtPoint:(NSPoint)point {
+    NSRect frame = _window.frame;
+    NSRect active = NSMakeRect(NSMaxX(frame) - _size.width, NSMinY(frame), _size.width, _size.height);
+    BOOL ignore = !NSPointInRect(point, active);
+    if (_window.ignoresMouseEvents != ignore) {
+        _window.ignoresMouseEvents = ignore;
+    }
+}
+
+@end
+
+bool voicePlaceMacPanel(int width, int height, int windowWidth, int windowHeight,
+                        bool startup, bool setupPermissions, bool english) {
     __block bool placed = false;
     onMainThread(^{
+        static char mouseRegionKey;
         for (NSWindow *window in NSApp.windows) {
             if (![window isKindOfClass:NSClassFromString(@"WailsWindow")]) {
                 continue;
@@ -190,15 +268,22 @@ bool voicePlaceMacPanel(int width, int height, bool startup, bool setupPermissio
                 if (setupPermissions) {
                     dispatch_async(dispatch_get_main_queue(), ^{ showPermissionSetup(window, english); });
                 }
+                VoiceTypingMouseRegion *region = [[VoiceTypingMouseRegion alloc] initWithWindow:window];
+                if (region == nil) {
+                    return;
+                }
+                objc_setAssociatedObject(window, &mouseRegionKey, region, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                [region release];
+                NSRect visible = screen.visibleFrame;
+                CGFloat x = MAX(NSMinX(visible), NSMaxX(visible) - windowWidth - 24);
+                CGFloat y = MAX(NSMinY(visible), NSMinY(visible) + 24);
+                [window setFrame:NSMakeRect(x, y, windowWidth, windowHeight) display:YES animate:NO];
             }
-            NSRect visible = screen.visibleFrame;
-            NSRect previous = window.frame;
-            CGFloat right = startup ? NSMaxX(visible) - 24 : NSMaxX(previous);
-            CGFloat bottom = startup ? NSMinY(visible) + 24 : NSMinY(previous);
-            CGFloat x = MAX(NSMinX(visible), MIN(right, NSMaxX(visible)) - width);
-            CGFloat y = MAX(NSMinY(visible), MIN(bottom, NSMaxY(visible) - height));
-            [window setFrame:NSMakeRect(x, y, width, height) display:startup animate:NO];
-            placed = true;
+            VoiceTypingMouseRegion *region = objc_getAssociatedObject(window, &mouseRegionKey);
+            if (region != nil) {
+                [region setWidth:width height:height];
+                placed = true;
+            }
             return;
         }
     });
