@@ -5,6 +5,8 @@ const section = document.querySelector('#settings-panel');
 const gear = document.querySelector('#open-settings');
 const form = document.querySelector('#settings');
 const provider = document.querySelector('#provider');
+const modelField = document.querySelector('#soniox-model-field');
+const model = document.querySelector('#soniox-model');
 const language = document.querySelector('#language');
 const alwaysOnTop = document.querySelector('#always-on-top');
 const key = document.querySelector('#key');
@@ -67,6 +69,7 @@ reveal.addEventListener('click', async () => {
 });
 key.addEventListener('input', () => { key.dataset.edited = 'yes'; });
 provider.addEventListener('change', () => {
+  modelField.hidden = provider.value !== 'soniox';
   delete key.dataset.edited;
   showMessage();
   void refreshKey();
@@ -121,6 +124,7 @@ form.addEventListener('submit', async event => {
   try {
     const result = await settingsApi.save({
       provider: chosen,
+      sonioxModel: model.value,
       shortcut: selectedShortcut,
       alwaysOnTop: alwaysOnTop.checked,
       key: key.dataset.edited ? key.value : '',
@@ -139,6 +143,8 @@ async function load(request) {
   const config = await settingsApi.config();
   if (!config || request !== opening) return;
   provider.value = config.provider;
+  model.value = config.sonioxModel;
+  modelField.hidden = provider.value !== 'soniox';
   alwaysOnTop.checked = config.alwaysOnTop;
   alwaysOnTop.disabled = !config.canKeepAbove;
   selectedShortcut = config.shortcut;

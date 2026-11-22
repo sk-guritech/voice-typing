@@ -82,7 +82,7 @@ func (p *Probe) ReportSelfTestFailure(message string) {
 }
 
 func (p *Probe) Connect(rate int) error {
-	provider, key, err := p.sessionSettings()
+	provider, model, key, err := p.sessionSettings()
 	if err != nil || key == "" || strings.ContainsAny(key, "\r\n") {
 		return errors.New("ui.missingKey")
 	}
@@ -109,7 +109,7 @@ func (p *Probe) Connect(rate int) error {
 		return errors.New("ui.sonioxConnect")
 	}
 	if err := conn.WriteJSON(map[string]any{
-		"model": "stt-rt-v6", "audio_format": "pcm_s16le", "sample_rate": rate,
+		"model": model, "audio_format": "pcm_s16le", "sample_rate": rate,
 		"num_channels": 1, "language_hints": []string{"ja", "en"},
 	}); err != nil {
 		conn.Close()
@@ -228,6 +228,10 @@ func fixture() *httptest.Server {
 		defer conn.Close()
 		var config map[string]any
 		if err := conn.ReadJSON(&config); err != nil || config["audio_format"] != "pcm_s16le" || config["sample_rate"] != float64(16000) {
+			return
+		}
+		if config["model"] != "stt-rt-test" {
+			conn.WriteJSON(map[string]any{"error_code": 400})
 			return
 		}
 		audioBytes := 0

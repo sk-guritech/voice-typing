@@ -13,11 +13,14 @@ import (
 )
 
 const keyringService = "Voice Typing WebView"
+const defaultSonioxModel = "stt-rt-v6"
 
 var shortcutPattern = regexp.MustCompile(`^(?:(?:Command|Super|Control|Alt|Shift)\+)*(?:PageDown|PageUp|Home|End|Insert|Delete|Space|Backspace|Up|Down|Left|Right|Tab|Enter|[A-Z0-9]|F(?:[1-9]|1[0-9]|2[0-4]))$`)
+var sonioxModelPattern = regexp.MustCompile(`^stt-rt-[a-z0-9][a-z0-9._-]{0,63}$`)
 
 type Preferences struct {
 	Provider    string `json:"provider"`
+	SonioxModel string `json:"sonioxModel"`
 	Shortcut    string `json:"shortcut"`
 	AlwaysOnTop bool   `json:"alwaysOnTop"`
 	Language    string `json:"language"`
@@ -25,6 +28,7 @@ type Preferences struct {
 
 type SettingsForm struct {
 	Provider    string `json:"provider"`
+	SonioxModel string `json:"sonioxModel"`
 	Shortcut    string `json:"shortcut"`
 	AlwaysOnTop bool   `json:"alwaysOnTop"`
 	Key         string `json:"key"`
@@ -35,7 +39,7 @@ func validProvider(provider string) bool {
 }
 
 func (p *Probe) loadPreferences() {
-	p.prefs = Preferences{Provider: "soniox", Shortcut: "PageDown", AlwaysOnTop: true, Language: "ja"}
+	p.prefs = Preferences{Provider: "soniox", SonioxModel: defaultSonioxModel, Shortcut: "PageDown", AlwaysOnTop: true, Language: "ja"}
 	if p.IsSelfTest() {
 		return
 	}
@@ -48,6 +52,9 @@ func (p *Probe) loadPreferences() {
 		if settings.Language != "en" {
 			settings.Language = "ja"
 		}
+		if !sonioxModelPattern.MatchString(settings.SonioxModel) {
+			settings.SonioxModel = defaultSonioxModel
+		}
 		p.prefs = settings
 	}
 }
@@ -57,6 +64,7 @@ func (p *Probe) Config() map[string]any {
 	defer p.settingsMu.Unlock()
 	return map[string]any{
 		"provider": p.prefs.Provider, "shortcut": p.prefs.Shortcut,
+		"sonioxModel": p.prefs.SonioxModel,
 		"alwaysOnTop": p.prefs.AlwaysOnTop, "canKeepAbove": true,
 		"language":       p.prefs.Language,
 		"globalShortcut": p.shortcut != nil && p.shortcutError == "",
@@ -122,7 +130,20 @@ func (p *Probe) Save(form SettingsForm) map[string]any {
 	}
 	p.settingsMu.Lock()
 	defer p.settingsMu.Unlock()
-	settings := Preferences{Provider: form.Provider, Shortcut: form.Shortcut, AlwaysOnTop: form.AlwaysOnTop, Language: p.prefs.Language}
+	settings := p.prefs
+	settings.Provider = form.Provider
+	settings.Shortcut = form.Shortcut
+	settings.AlwaysOnTop = form.AlwaysOnTop
+	if form.Provider == "soniox" {
+		model := strings.TrimSpace(form.SonioxModel)
+		if model == "" {
+			model = defaultSonioxModel
+		}
+		if !sonioxModelPattern.MatchString(model) {
+			return failure("ui.invalidSonioxModel")
+		}
+		settings.SonioxModel = model
+	}
 	changedShortcut := p.shortcut != nil && (settings.Shortcut != p.prefs.Shortcut || p.shortcutError != "")
 	if changedShortcut {
 		if err := p.shortcut.set(settings.Shortcut); err != nil {
@@ -153,13 +174,14 @@ func (p *Probe) Save(form SettingsForm) map[string]any {
 	return map[string]any{"ok": true}
 }
 
-func (p *Probe) sessionSettings() (provider, key string, err error) {
-	if p.IsSelfTest() {
-		return "soniox", "synthetic-test-credential", nil
-	}
+func (p *Probe) sessionSettings() (provider, model, key string, err error) {
 	p.settingsMu.Lock()
 	provider = p.prefs.Provider
+	model = p.prefs.SonioxModel
 	p.settingsMu.Unlock()
+	if p.IsSelfTest() {
+		return provider, model, "synthetic-test-credential", nil
+	}
 	key, err = keyring.Get(keyringService, provider)
 	return
 }

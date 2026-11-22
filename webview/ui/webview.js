@@ -372,6 +372,16 @@
       void backend.TraceSelfTest('Settings opened');
       const form = section.querySelector('form');
       const input = section.querySelector('#key');
+      const provider = section.querySelector('#provider');
+      const model = section.querySelector('#soniox-model');
+      const modelField = section.querySelector('#soniox-model-field');
+      await waitFor('Default Soniox model', () => !modelField.hidden && model.value === 'stt-rt-v6');
+      provider.value = 'openai';
+      provider.dispatchEvent(new Event('change'));
+      if (!modelField.hidden) throw new Error('OpenAI settings showed the Soniox model field');
+      provider.value = 'soniox';
+      provider.dispatchEvent(new Event('change'));
+      if (modelField.hidden) throw new Error('Soniox settings hid the model field');
       input.value = 'x'.repeat(2001);
       input.dispatchEvent(new Event('input'));
       form.requestSubmit();
@@ -401,12 +411,18 @@
       selectLanguage('ja');
       if (document.documentElement.lang !== 'ja') throw new Error('Selecting Japanese did not immediately translate the UI');
       await languageWrite;
+      model.value = 'stt-async-v6';
+      form.requestSubmit();
+      await waitFor('Async model rejected', () => !section.hidden &&
+        section.querySelector('#message').textContent === t('invalidSonioxModel'));
+      model.value = 'stt-rt-test';
       form.requestSubmit();
       if (!reduceMotion.matches) {
         await waitFor('Settings closing animation', () => section.getAnimations().some(animation => animation.effect.getKeyframes().at(-1).opacity === '0'));
       }
       await waitFor('Settings closed in Japanese', () => section.hidden && document.documentElement.lang === 'ja' &&
         viewportIs(fixedViewport ? settingsSize : compact));
+      if (config.sonioxModel !== 'stt-rt-test') throw new Error('The Soniox model was not saved');
       void backend.TraceSelfTest('Settings closed');
       if (hotkeyTest) {
         if (!config.globalShortcut) throw new Error(config.error);
