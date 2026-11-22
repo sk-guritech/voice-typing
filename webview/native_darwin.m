@@ -128,23 +128,43 @@ static bool relaunchForPermissions(void) {
     bool accessibility = !(missing & accessibilityMissing);
     [self.microphoneButton setEnabled:!microphone];
     [self.accessibilityButton setEnabled:!accessibility];
-    self.microphoneButton.title = microphone
-        ? @"マイク：許可済み / Microphone allowed" : @"マイクを設定 / Set up Microphone";
-    self.accessibilityButton.title = accessibility
-        ? @"アクセシビリティ：許可済み / Accessibility allowed" : @"アクセシビリティを設定 / Set up Accessibility";
+    self.microphoneButton.title = microphone ? @"許可済み / Allowed" : @"設定 / Set up";
+    self.accessibilityButton.title = accessibility ? @"許可済み / Allowed" : @"設定 / Set up";
+    self.microphoneButton.accessibilityLabel = microphone
+        ? @"マイクは許可済み / Microphone allowed" : @"マイクを設定 / Set up Microphone";
+    self.accessibilityButton.accessibilityLabel = accessibility
+        ? @"アクセシビリティは許可済み / Accessibility allowed" : @"アクセシビリティを設定 / Set up Accessibility";
 }
 
 @end
 
-static NSString *permissionInstructions(int missing) {
-    NSString *instructions = @"音声入力にはマイク、自動貼り付けにはアクセシビリティを許可してください。両方の許可を確認すると自動で再起動します。"
-                              "\nAllow Microphone for dictation and Accessibility for automatic pasting. Voice Typing restarts once both permissions are granted.";
-    if (missing & accessibilityMissing) {
-        return [instructions stringByAppendingString:
-            @"\n\n設定でアクセシビリティが「オン」なのに、この画面で設定を求められる場合は、旧ビルドの署名に許可が残っている可能性があります。古い登録を削除し、現在の Voice Typing.app を追加してください。"
-             "\nIf Accessibility is already on but this build still needs permission, the previous entry may be for an older signature. Remove that entry and add the current Voice Typing.app."];
+static const CGFloat permissionContentWidth = 312;
+static const CGFloat permissionRowHeight = 38;
+
+static NSView *permissionRow(NSString *label, NSButton *button) {
+    const CGFloat buttonWidth = 140;
+    NSView *row = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, permissionContentWidth, permissionRowHeight)] autorelease];
+    NSTextField *name = [NSTextField wrappingLabelWithString:label];
+    name.frame = NSMakeRect(0, 0, permissionContentWidth - buttonWidth - 12, permissionRowHeight);
+    button.frame = NSMakeRect(permissionContentWidth - buttonWidth, (permissionRowHeight - 28) / 2, buttonWidth, 28);
+    [row addSubview:name];
+    [row addSubview:button];
+    return row;
+}
+
+static void layoutPermissionControls(NSView *controls, NSView *micRow, NSView *pasteRow,
+                                     NSTextField *help, int missing) {
+    help.hidden = !(missing & accessibilityMissing);
+    CGFloat y = 0;
+    if (!help.hidden) {
+        NSRect measure = NSMakeRect(0, 0, permissionContentWidth, CGFLOAT_MAX);
+        CGFloat height = ceil([help.cell cellSizeForBounds:measure].height) + 2;
+        help.frame = NSMakeRect(0, 0, permissionContentWidth, height);
+        y = height + 10;
     }
-    return instructions;
+    [pasteRow setFrameOrigin:NSMakePoint(0, y)];
+    [micRow setFrameOrigin:NSMakePoint(0, y + permissionRowHeight + 8)];
+    [controls setFrameSize:NSMakeSize(permissionContentWidth, y + permissionRowHeight * 2 + 8)];
 }
 
 static void showPermissionSetup(void) {
@@ -159,19 +179,26 @@ static void showPermissionSetup(void) {
     actions.microphoneButton = microphone;
     actions.accessibilityButton = accessibility;
     [actions showMissingPermissions:missing];
-    NSStackView *controls = [NSStackView stackViewWithViews:@[microphone, accessibility]];
-    controls.orientation = NSUserInterfaceLayoutOrientationVertical;
-    controls.alignment = NSLayoutAttributeLeading;
-    controls.spacing = 8;
-    NSSize size = controls.fittingSize;
-    size.width = MAX(size.width, 330);
-    [controls setFrameSize:size];
+
+    NSView *micRow = permissionRow(@"マイク\nMicrophone", microphone);
+    NSView *pasteRow = permissionRow(@"アクセシビリティ\nAccessibility", accessibility);
+    NSTextField *updateHelp = [NSTextField wrappingLabelWithString:
+        @"オンなのに未許可の場合は、旧署名の登録を削除し、今の Voice Typing.app を追加してください。"
+         "\nIf already on, remove the entry for the old signature and add the current Voice Typing.app."];
+    updateHelp.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
+    updateHelp.textColor = NSColor.secondaryLabelColor;
+    NSView *controls = [[[NSView alloc] initWithFrame:NSZeroRect] autorelease];
+    [controls addSubview:micRow];
+    [controls addSubview:pasteRow];
+    [controls addSubview:updateHelp];
+    layoutPermissionControls(controls, micRow, pasteRow, updateHelp, missing);
 
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = @"権限設定 / Voice Typing permissions";
-    alert.informativeText = permissionInstructions(missing);
+    alert.messageText = @"権限設定 / Permissions";
+    alert.informativeText = @"両方を許可すると自動で再起動します。"
+                             "\nAllow both permissions to restart automatically.";
     alert.accessoryView = controls;
-    [alert addButtonWithTitle:@"再起動して確認 / Restart and check"];
+    [alert addButtonWithTitle:@"再起動 / Restart"];
     [alert addButtonWithTitle:@"あとで / Later"];
     __block NSTask *probe = nil;
     NSTimer *timer = [NSTimer timerWithTimeInterval:1.5 repeats:YES block:^(NSTimer *check) {
@@ -183,7 +210,7 @@ static void showPermissionSetup(void) {
                 probe.terminationStatus != missing) {
                 missing = probe.terminationStatus;
                 [actions showMissingPermissions:missing];
-                alert.informativeText = permissionInstructions(missing);
+                layoutPermissionControls(controls, micRow, pasteRow, updateHelp, missing);
                 [alert layout];
             }
             [probe release];
