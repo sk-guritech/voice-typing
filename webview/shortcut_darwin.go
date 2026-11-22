@@ -35,6 +35,10 @@ func startNativeShortcut(onPress func()) nativeShortcut {
 	return &macShortcut{callback: cgo.NewHandle(onPress)}
 }
 
+func macLetterKey(character byte) C.int {
+	return C.voiceMacLetterKey(C.uchar(character))
+}
+
 func (h *macShortcut) set(shortcut string) error {
 	parts := strings.Split(shortcut, "+")
 	var modifiers C.UInt32
@@ -53,7 +57,7 @@ func (h *macShortcut) set(shortcut string) error {
 	last := parts[len(parts)-1]
 	key, ok := macKey[last]
 	if len(last) == 1 {
-		code := C.voiceMacLetterKey(C.uchar(last[0]))
+		code := macLetterKey(last[0])
 		key, ok = C.UInt32(code), code >= 0
 	}
 	if !ok || C.voiceRegisterMacShortcut(key, modifiers, C.uintptr_t(h.callback)) != C.noErr {
