@@ -5,7 +5,7 @@
 <h1 align="center">Voice Typing</h1>
 
 <p align="center"><strong>ショートカットひとつで、話した言葉を文字入力。</strong></p>
-<p align="center">Soniox または OpenAI を使える、小さなデスクトップパネル。</p>
+<p align="center">メモやメールなど、普段使っているアプリで音声入力できます。</p>
 
 <p align="center">
   <a href="#準備">準備</a> · <a href="#ダウンロードと起動">ダウンロード</a> · <a href="#使い方">3ステップで使う</a> · <a href="README.md">English</a>
@@ -22,13 +22,13 @@
 
 ## ダウンロードと起動
 
-お使いの OS 向けの v1.0.0 をダウンロードして起動し、歯車から API キーを設定します。[GitHub Releases](https://github.com/sk-guritech/voice-typing/releases/tag/v1.0.0)
+お使いの OS に合ったファイルをダウンロードして起動し、歯車から API キーを設定します。[最新版をダウンロード](https://github.com/sk-guritech/voice-typing/releases/latest)
 
-| OS | ダウンロード | 起動方法 | 実環境での動作確認 |
+| OS | 選ぶファイル | 起動方法 | 実環境での動作確認 |
 | --- | --- | --- | --- |
-| Windows x64 | [EXE](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-x64.exe) | ファイルをダブルクリックします。 | ○ 確認済み |
-| Linux x64 | [AppImage](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-linux-x64.AppImage) | ファイルのプロパティで実行を許可してから開きます。 | × 未確認 |
-| macOS | [Apple Silicon 用 ZIP](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-mac-arm64.zip) / [Intel 用 ZIP](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-mac-x64.zip) | ZIP を展開して `Voice Typing.app` を開きます。 | × Mac 実機で未確認 |
+| Windows x64 | `.exe` | ファイルをダブルクリックします。 | ○ 確認済み |
+| Linux x64 | AppImage / `.tar.gz` | AppImage は実行を許可してから開きます。`.tar.gz` は展開して `voice-typing` を起動します。 | × 未確認 |
+| macOS | Apple Silicon（arm64）用または Intel（x64）用の ZIP | ZIP を展開して `Voice Typing.app` を開きます。 | × Mac 実機で未確認 |
 
 ## 使い方
 
@@ -51,8 +51,8 @@ OS、アプリのバージョン、問題が起きた手順と結果を書いて
 
 Go 1.27.4 で `webview/` から実行します。
 
-- **Windows（WebView2 Runtime）** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-1.1.0-windows-x64.exe .`
-- **Linux（GTK 3、WebKitGTK 4.1。Ubuntu コンテナで確認済み）** — Bash で `docker build -t voice-typing:linux .` の後、`docker run --rm voice-typing:linux tar -cz -C /usr/local/bin voice-typing > ../release/Voice-Typing-1.1.0-linux-x64.tar.gz` を実行します。
+- **Windows（WebView2 Runtime）** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-windows-x64.exe .`
+- **Linux（GTK 3、WebKitGTK 4.1。Ubuntu コンテナで確認済み）** — Bash で `docker build -t voice-typing:linux .` の後、`docker run --rm voice-typing:linux tar -cz -C /usr/local/bin voice-typing > ../release/Voice-Typing-linux-x64.tar.gz` を実行します。
 - **macOS（macOS 13 以降）** — Apple のコマンドラインツールが入った Mac で `bash build-macos.sh`。
 
 </details>

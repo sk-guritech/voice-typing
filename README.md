@@ -5,7 +5,7 @@
 <h1 align="center">Voice Typing</h1>
 
 <p align="center"><strong>Type with your voice using a single shortcut.</strong></p>
-<p align="center">A small desktop panel powered by Soniox or OpenAI.</p>
+<p align="center">Dictate notes and emails in the apps you use every day.</p>
 
 <p align="center">
   <a href="#get-an-api-key">Get an API key</a> · <a href="#download-and-run">Download and run</a> · <a href="#quick-start">Quick start</a> · <a href="README.ja.md">日本語</a>
@@ -22,13 +22,13 @@ Create a key for the speech recognition service you want to use.
 
 ## Download and run
 
-Download the v1.0.0 package for your computer, open it, and set up an API key in the gear menu. [GitHub Releases](https://github.com/sk-guritech/voice-typing/releases/tag/v1.0.0)
+Download the file for your computer, open it, and set up an API key in the gear menu. [Download the latest release](https://github.com/sk-guritech/voice-typing/releases/latest)
 
-| OS | Download | Launch | Tested on a desktop |
+| OS | File to choose | Launch | Tested on a desktop |
 | --- | --- | --- | --- |
-| Windows x64 | [EXE](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-x64.exe) | Double-click the file. | ○ Verified |
-| Linux x64 | [AppImage](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-linux-x64.AppImage) | Make it executable in file properties, then open it. | × Unverified |
-| macOS | [Apple Silicon ZIP](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-mac-arm64.zip) / [Intel ZIP](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-mac-x64.zip) | Extract the ZIP and open `Voice Typing.app`. | × Unverified on a physical Mac |
+| Windows x64 | `.exe` | Double-click the file. | ○ Verified |
+| Linux x64 | AppImage / `.tar.gz` | Make the AppImage executable and open it, or extract the archive and run `voice-typing`. | × Unverified |
+| macOS | Apple silicon (arm64) or Intel (x64) ZIP | Extract the ZIP and open `Voice Typing.app`. | × Unverified on a physical Mac |
 
 ## Quick start
 
@@ -51,8 +51,8 @@ Include your OS, Voice Typing version, what you did, and what happened. Remove A
 
 Use Go 1.27.4 from `webview/`.
 
-- **Windows (WebView2 Runtime)** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-1.1.0-windows-x64.exe .`
-- **Linux (GTK 3 and WebKitGTK 4.1, tested in an Ubuntu container)** — In Bash, run `docker build -t voice-typing:linux .`, then `docker run --rm voice-typing:linux tar -cz -C /usr/local/bin voice-typing > ../release/Voice-Typing-1.1.0-linux-x64.tar.gz`.
+- **Windows (WebView2 Runtime)** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-windows-x64.exe .`
+- **Linux (GTK 3 and WebKitGTK 4.1, tested in an Ubuntu container)** — In Bash, run `docker build -t voice-typing:linux .`, then `docker run --rm voice-typing:linux tar -cz -C /usr/local/bin voice-typing > ../release/Voice-Typing-linux-x64.tar.gz`.
 - **macOS (macOS 13 or later)** — Run `bash build-macos.sh` on a Mac with Apple command line tools installed.
 
 </details>
