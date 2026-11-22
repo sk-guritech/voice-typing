@@ -128,26 +128,26 @@ static bool relaunchForPermissions(void) {
     bool accessibility = !(missing & accessibilityMissing);
     [self.microphoneButton setEnabled:!microphone];
     [self.accessibilityButton setEnabled:!accessibility];
-    self.microphoneButton.title = microphone ? @"Allowed\n許可済み" : @"Set up\n設定";
-    self.accessibilityButton.title = accessibility ? @"Allowed\n許可済み" : @"Set up\n設定";
+    self.microphoneButton.title = microphone ? @"Allowed" : @"Set up";
+    self.accessibilityButton.title = accessibility ? @"Allowed" : @"Set up";
     self.microphoneButton.accessibilityLabel = microphone
-        ? @"Microphone allowed / マイクは許可済み" : @"Set up Microphone / マイクを設定";
+        ? @"Microphone allowed" : @"Set up Microphone";
     self.accessibilityButton.accessibilityLabel = accessibility
-        ? @"Accessibility allowed / アクセシビリティは許可済み" : @"Set up Accessibility / アクセシビリティを設定";
+        ? @"Accessibility allowed" : @"Set up Accessibility";
 }
 
 @end
 
 static const CGFloat permissionContentWidth = 280;
-static const CGFloat permissionRowHeight = 42;
+static const CGFloat permissionRowHeight = 30;
 
 static NSView *permissionRow(NSString *label, NSButton *button) {
     const CGFloat buttonWidth = 144;
-    const CGFloat buttonHeight = 38;
+    const CGFloat buttonHeight = 28;
     NSView *row = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, permissionContentWidth, permissionRowHeight)] autorelease];
-    NSTextField *name = [NSTextField wrappingLabelWithString:label];
-    name.frame = NSMakeRect(0, 0, permissionContentWidth - buttonWidth - 12, permissionRowHeight);
-    button.cell.wraps = YES;
+    NSTextField *name = [NSTextField labelWithString:label];
+    CGFloat labelHeight = name.fittingSize.height;
+    name.frame = NSMakeRect(0, (permissionRowHeight - labelHeight) / 2, permissionContentWidth - buttonWidth - 12, labelHeight);
     button.frame = NSMakeRect(permissionContentWidth - buttonWidth, (permissionRowHeight - buttonHeight) / 2,
                               buttonWidth, buttonHeight);
     [row addSubview:name];
@@ -183,8 +183,8 @@ static void showPermissionSetup(void) {
     actions.accessibilityButton = accessibility;
     [actions showMissingPermissions:missing];
 
-    NSView *micRow = permissionRow(@"Microphone\nマイク", microphone);
-    NSView *pasteRow = permissionRow(@"Accessibility\nアクセシビリティ", accessibility);
+    NSView *micRow = permissionRow(@"Microphone", microphone);
+    NSView *pasteRow = permissionRow(@"Accessibility", accessibility);
     NSTextField *updateHelp = [NSTextField wrappingLabelWithString:
         @"If already on, remove the entry for the old signature and add the current Voice Typing.app."
          "\nオンなのに未許可の場合は、旧署名の登録を削除し、今の Voice Typing.app を追加してください。"];
@@ -197,12 +197,12 @@ static void showPermissionSetup(void) {
     layoutPermissionControls(controls, micRow, pasteRow, updateHelp, missing);
 
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = @"Permissions\n権限設定";
+    alert.messageText = @"Permissions";
     alert.informativeText = @"Allow both permissions to restart automatically."
                              "\n両方を許可すると自動で再起動します。";
     alert.accessoryView = controls;
-    [alert addButtonWithTitle:@"Restart / 再起動"];
-    [alert addButtonWithTitle:@"Later / あとで"];
+    [alert addButtonWithTitle:@"Restart"];
+    [alert addButtonWithTitle:@"Close"];
     __block NSTask *probe = nil;
     NSTimer *timer = [NSTimer timerWithTimeInterval:1.5 repeats:YES block:^(NSTimer *check) {
         if (probe.running) {
@@ -263,7 +263,7 @@ static void showPermissionSetup(void) {
                 return;
             }
             NSAlert *failure = [[NSAlert alloc] init];
-            failure.messageText = @"Could not restart\n再起動できませんでした";
+            failure.messageText = @"Could not restart";
             failure.informativeText = @"Quit and reopen Voice Typing to apply the permissions."
                                        "\nVoice Typing を終了して開き直してください。";
             [failure runModal];
