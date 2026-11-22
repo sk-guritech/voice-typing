@@ -4,9 +4,7 @@
 
 void voiceMacPromptForInputAccess(void) {
     dispatch_async(dispatch_get_main_queue(), ^{
-        AXIsProcessTrustedWithOptions((__bridge CFDictionaryRef)@{
-            (__bridge NSString *)kAXTrustedCheckOptionPrompt: @YES
-        });
+        CGRequestPostEventAccess();
     });
 }
 
