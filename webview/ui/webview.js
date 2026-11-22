@@ -341,7 +341,15 @@
         await waitFor('Settings opening animation', () => section.getAnimations().some(animation => animation.effect.getKeyframes()[0].opacity === '0'));
       }
       void backend.TraceSelfTest('Settings opened');
-      gear.click();
+      const form = section.querySelector('form');
+      const input = section.querySelector('#key');
+      input.value = 'x'.repeat(2001);
+      input.dispatchEvent(new Event('input'));
+      form.requestSubmit();
+      await waitFor('Save error stays visible', () => !section.hidden && section.querySelector('#message').textContent.includes('形式'));
+      input.value = '';
+      input.dispatchEvent(new Event('input'));
+      form.requestSubmit();
       if (!reduceMotion.matches) {
         await waitFor('Settings closing animation', () => section.getAnimations().some(animation => animation.effect.getKeyframes().at(-1).opacity === '0'));
       }

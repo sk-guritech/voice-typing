@@ -1,53 +1,57 @@
 # Voice Typing
 
-<img src="webview/assets/icon.png" width="64" height="64" alt="Voice Typing のアイコン">
+English · [日本語](README.ja.md)
 
-Soniox または OpenAI で話した内容を文字にするデスクトップアプリです。Go と Wails を使います。
+<img src="webview/assets/icon.png" width="64" height="64" alt="Voice Typing app icon">
 
-## 起動
+Voice Typing turns speech into text using Soniox or OpenAI. It's a desktop app built with Go and Wails.
 
-[`release/`](release/) にある、お使いの OS と CPU に合ったファイルを開きます。
+## Launch the app
 
-| OS | 起動方法 |
+Open the file for your OS and CPU in [`release/`](release/).
+
+| OS | How to launch |
 | --- | --- |
-| Windows x64 | WebView2 が入った PC で `.exe` をダブルクリックします。 |
-| Linux x64 | `.tar.gz` を展開して `voice-typing` を起動します。GTK 3 と WebKitGTK 4.1 が必要です。 |
-| macOS | Apple Silicon（arm64）または Intel（x64）の ZIP を展開し、`Voice Typing.app` を開きます。実機での動作は未確認で、Apple の公証は未実施です。 |
+| Windows x64 | Double-click the `.exe`. Windows needs WebView2. |
+| Linux x64 | Extract the `.tar.gz` and run `voice-typing`. GTK 3 and WebKitGTK 4.1 are required. |
+| macOS | Extract the Apple Silicon (arm64) or Intel (x64) ZIP and open `Voice Typing.app`. The app is ad hoc signed. Testing on a physical Mac is still pending. |
 
-## 使い方
+## How to use it
 
-画像は Windows の配布版を起動して撮影したものです。録音画面はテスト用の合成音で撮影しています。
+These screenshots were captured from the Windows release executable. The recording screenshot uses a synthetic test tone.
 
-### 1. 認識サービスを設定する
+### 1. Set up speech recognition
 
-小さなパネルの歯車をクリックします。**Soniox** または **OpenAI** を選び、そのサービスの API キーを入力して **保存** を押します。マイクの許可を求められたら許可します。
+Click the gear on the small panel. Choose **Soniox** or **OpenAI**, enter your API key for that service, and click **Save** (保存). Allow microphone access if prompted.
 
-<img src="docs/settings.png" width="410" alt="歯車で開いた設定。認識サービス、API キー、ショートカット、常に手前に表示、保存ボタンがある">
+On Windows and Linux, the settings panel closes after a successful save. If saving fails, the panel stays open and shows the error.
 
-ショートカットを変えるときは **変更** をクリックし、使いたいキーを押して **保存** します。**常に手前に表示** もここで切り替えられます。API キーは OS の資格情報ストアに保存され、録音した音声は選んだサービスに送信されます。
+<img src="docs/settings.png" width="410" alt="Settings panel with fields for the speech provider, API key, and shortcut, plus an Always on top checkbox and a Save button">
 
-### 2. 録音する
+Click **Change** (変更) to choose another shortcut, then click **Save**. You can also toggle **Always on top** (常に手前に表示) here. The app stores your API key in the operating system's credential store and sends recorded audio to your selected service.
 
-1. Windows では、文字を入れたい欄にカーソルを置きます。macOS と Linux ではパネルにフォーカスを置きます。
-2. **Page Down** を押します。薄い波形はマイクの準備中です。**青い波形が動いたら**話し始めます。
-3. 話し終わったら **Page Down** をもう一度押し、認識結果を待ちます。
+### 2. Record
 
-<img src="docs/recording.png" width="204" alt="録音中の操作パネル。青い波形の横に設定と終了ボタンが並ぶ">
+1. On Windows, put the cursor in the field where you want the text. On macOS and Linux, focus the Voice Typing panel.
+2. Press **Page Down**. A faint waveform means the microphone is getting ready. **Start speaking when the blue waveform moves.**
+3. Press **Page Down** again when you're done and wait for the result.
 
-macOS の配布 ZIP では、準備中に円形のマークが表示されます。青い波形が動いたら話し始めます。
+<img src="docs/recording.png" width="204" alt="Recording panel showing a blue waveform beside the settings and quit buttons">
 
-歯車の右クリックメニューからも録音を開始・終了できます。アプリを終了するには **×** をクリックします。
+The current macOS ZIP shows a circular icon while the microphone is getting ready. Start speaking once the blue waveform moves.
 
-### 3. 文字を入力する
+You can also start or stop recording by right-clicking the gear. Click **×** to quit the app.
 
-Windows でグローバルショートカットから録音した場合は、録音開始時にフォーカスがあった欄に自動で貼り付けます。途中で入力先を変えた場合、右クリックメニューから録音した場合、macOS と Linux では、結果をクリップボードから貼り付けます。
+### 3. Enter the text
 
-エラーのアイコンが出たら歯車を開き、設定内のメッセージを確認してください。
+On Windows, recording with the global shortcut pastes the result into the field that had focus when recording started. If you switch fields mid-recording, start recording from the right-click menu, or use macOS or Linux, paste the result from the clipboard.
 
-## 開発
+If an error icon appears, open the gear menu and read the message in settings.
 
-Go 1.27.4 で `webview/` からビルドします。
+## Build locally
 
-- **Windows**　`go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-1.0.0-windows-x64.exe .`
-- **Linux**　GTK と WebKitGTK の開発環境で `go build -tags production,webkit2_41 -trimpath -ldflags "-s -w" -o voice-typing .`。Docker を使う場合は `docker build -t voice-typing:linux .`。
-- **macOS**　Apple の開発ツールが入った Mac で `bash build-macos.sh`。
+Use Go 1.27.4 and run these commands from `webview/`.
+
+- **Windows** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-1.0.0-windows-x64.exe .`
+- **Linux** — With the GTK and WebKitGTK development libraries installed, run `go build -tags production,webkit2_41 -trimpath -ldflags "-s -w" -o voice-typing .`. For a Docker build, run `docker build -t voice-typing:linux .`.
+- **macOS** — On a Mac with the Apple command line tools installed, run `bash build-macos.sh`.

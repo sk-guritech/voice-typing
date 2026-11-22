@@ -103,11 +103,8 @@ form.addEventListener('submit', async event => {
       key: key.dataset.edited ? key.value : '',
     });
     if (request !== opening) return;
-    message.textContent = result?.ok ? '保存しました。' : result?.error ?? '保存できませんでした。';
-    if (result?.ok && chosen === provider.value) {
-      delete key.dataset.edited;
-      await refreshKey();
-    }
+    if (result?.ok) settingsApi.close();
+    else message.textContent = result?.error ?? '設定を保存できませんでした。';
   } catch {
     if (request === opening) message.textContent = '設定を保存できませんでした。';
   } finally {
