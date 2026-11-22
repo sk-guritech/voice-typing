@@ -130,7 +130,6 @@ settingsApi.onVisibility(visible => {
   const request = ++opening;
   ++changing;
   section.hidden = !visible;
-  gear.setAttribute('aria-expanded', String(visible));
   capturing = false;
   capture.textContent = '変更';
   key.value = '';
@@ -139,7 +138,6 @@ settingsApi.onVisibility(visible => {
   reveal.textContent = '表示';
   message.textContent = '';
   if (visible) {
-    provider.focus();
     void load(request);
   } else {
     gear.focus();

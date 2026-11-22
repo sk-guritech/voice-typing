@@ -5,7 +5,7 @@ const symbol = document.querySelector('#symbol');
 const wave = document.querySelector('#wave');
 const bars = Array.from(wave.children);
 const states = {
-  idle: ['○', '待機中'], connecting: ['◔', '接続中'], listening: ['', '録音中'],
+  idle: ['○', '待機中'], connecting: ['', 'マイク準備中'], listening: ['', '録音中'],
   finishing: ['⋯', '確定中'], pasted: ['✓', '貼り付け完了'], copied: ['▣', 'コピー完了'],
   error: ['⚠', 'エラー'],
 };
@@ -19,7 +19,7 @@ function display(state) {
   symbol.textContent = icon;
   status.dataset.state = state;
   status.setAttribute('aria-label', label);
-  wave.hidden = state !== 'listening';
+  wave.hidden = state !== 'connecting' && state !== 'listening';
   symbol.hidden = !wave.hidden;
 }
 
@@ -49,14 +49,18 @@ async function start(id) {
   smooth = 0;
   for (const bar of bars) bar.style.transform = '';
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1 }, video: false });
+    task.context = new AudioContext({ sampleRate: 16000 });
+    const resumed = task.context.resume();
+    void resumed.catch(() => {});
+    const stream = api.useTestTone ? null : await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1 }, video: false });
     if (active !== task) {
-      stream.getTracks().forEach(track => track.stop());
+      stream?.getTracks().forEach(track => track.stop());
       return;
     }
     task.stream = stream;
-    task.context = new AudioContext({ sampleRate: 16000 });
+    api.trace?.(`Audio context ${task.context.state}`);
     await task.context.audioWorklet.addModule('pcm.js');
+    api.trace?.('Audio worklet loaded');
     if (active !== task) return;
     task.node = new AudioWorkletNode(task.context, 'pcm-capture', { channelCount: 1 });
     task.node.port.onmessage = ({ data }) => {
@@ -73,10 +77,14 @@ async function start(id) {
       if (active === task) api.audio(id, 'error');
       close(task);
     };
-    task.context.createMediaStreamSource(stream).connect(task.node);
+    const source = stream ? task.context.createMediaStreamSource(stream) : task.context.createOscillator();
+    api.audio(id, 'ready', task.context.sampleRate);
+    source.connect(task.node);
     task.node.connect(task.context.destination);
-    await task.context.resume();
-    if (active === task && !task.stopping) api.audio(id, 'ready', task.context.sampleRate);
+    if (!stream) source.start();
+    api.trace?.(`Audio source connected: ${task.context.state}`);
+    await resumed;
+    api.trace?.(`Audio context resumed: ${task.context.state}`);
   } catch {
     if (active === task) api.audio(id, 'error');
     close(task);
@@ -103,6 +111,7 @@ api.onCancel(id => { if (active?.id === id) close(active); });
 api.onState(display);
 void api.state().then(display);
 settingsButton.addEventListener('click', api.settings);
+document.querySelector('#quit-app').addEventListener('click', api.quit);
 settingsButton.addEventListener('contextmenu', event => {
   event.preventDefault();
   api.menu();

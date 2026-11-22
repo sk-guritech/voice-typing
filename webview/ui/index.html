@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; worker-src 'self'">
 <title>音声入力</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="webview.css">
 <body class="panel">
   <section class="inline-settings" id="settings-panel" aria-labelledby="settings-heading" hidden>
     <header class="settings-header">
@@ -39,10 +40,14 @@
     </div>
     <div class="panel-actions">
       <button id="open-settings" type="button" aria-label="音声入力の設定" aria-controls="settings-panel" aria-expanded="false">
-        <span aria-hidden="true">⚙︎</span>
+        <span class="gear-icon" aria-hidden="true"></span>
+      </button>
+      <button id="quit-app" type="button" aria-label="アプリを終了">
+        <span aria-hidden="true">×</span>
       </button>
     </div>
   </main>
+  <script src="webview.js"></script>
   <script src="panel.js"></script>
   <script src="settings.js"></script>
 </body>

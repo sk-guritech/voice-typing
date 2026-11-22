@@ -1,0 +1,21 @@
+.floating-panel { --wails-draggable: drag; }
+.panel-actions { --wails-draggable: no-drag; }
+.panel-menu {
+  width: 164px;
+  box-sizing: border-box;
+  padding: 4px;
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  background: var(--panel-bg);
+  color: var(--panel-text);
+}
+.inline-settings:not([hidden]) + .panel-menu { width: 100%; }
+.panel-menu button {
+  display: block;
+  width: 100%;
+  min-height: 26px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+.panel-menu button:hover, .panel-menu button:focus-visible { background: var(--panel-hover); }

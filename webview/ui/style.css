@@ -66,11 +66,12 @@ body { margin: 0; }
 #status[data-state=error] { color: var(--panel-error); }
 #wave { display: flex; height: 34px; align-items: center; gap: 4px; }
 #wave i { width: 4px; height: 32px; transform: scaleY(0.125); border-radius: 4px; background: var(--panel-wave); }
-.panel-actions { padding-left: 6px; border-left: 1px solid var(--panel-border); }
-#open-settings {
+#status[data-state=connecting] #wave i { background: var(--panel-icon); opacity: .4; }
+.panel-actions { display: flex; gap: 2px; padding-left: 6px; border-left: 1px solid var(--panel-border); }
+.panel-actions button {
   display: grid;
   place-items: center;
-  width: 40px;
+  width: 36px;
   height: 36px;
   padding: 0;
   border: 0;
@@ -81,9 +82,31 @@ body { margin: 0; }
   line-height: 1;
   -webkit-app-region: no-drag;
 }
-#open-settings:hover { background: var(--panel-hover); }
+.panel-actions button:hover { background: var(--panel-hover); }
 #open-settings[aria-expanded=true] { background: var(--panel-hover); }
-#open-settings:focus-visible { outline-offset: -2px; }
+.gear-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: currentColor;
+  clip-path: polygon(
+    35.5% 14.9%, 42.1% 12.8%, 42.2% 0.6%, 57.8% 0.6%, 57.9% 12.8%,
+    64.5% 14.9%, 70.7% 18.1%, 79.4% 9.5%, 90.5% 20.6%, 81.9% 29.3%,
+    85.1% 35.5%, 87.2% 42.1%, 99.4% 42.2%, 99.4% 57.8%, 87.2% 57.9%,
+    85.1% 64.5%, 81.9% 70.7%, 90.5% 79.4%, 79.4% 90.5%, 70.7% 81.9%,
+    64.5% 85.1%, 57.9% 87.2%, 57.8% 99.4%, 42.2% 99.4%, 42.1% 87.2%,
+    35.5% 85.1%, 29.3% 81.9%, 20.6% 90.5%, 9.5% 79.4%, 18.1% 70.7%,
+    14.9% 64.5%, 12.8% 57.9%, 0.6% 57.8%, 0.6% 42.2%, 12.8% 42.1%,
+    14.9% 35.5%, 18.1% 29.3%, 9.5% 20.6%, 20.6% 9.5%, 29.3% 18.1%
+  );
+  mask: radial-gradient(circle, transparent 3.1px, #000 3.6px);
+  transition: transform 210ms cubic-bezier(.2, .75, .25, 1);
+}
+#open-settings[aria-expanded=true] .gear-icon { transform: rotate(34deg); }
+@media (prefers-reduced-motion: reduce) {
+  .gear-icon { transition: none; }
+}
+.panel-actions button:focus-visible { outline-offset: -2px; }
 .inline-settings {
   flex: 1;
   min-height: 0;

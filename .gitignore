@@ -1,7 +1,7 @@
-# Dependencies and Electron build output
-/node_modules/
+# Build output
 /dist/
-npm-debug.log*
+/webview/voice-typing
+/webview/voice-typing.exe
 
 # Local credentials
 .env
