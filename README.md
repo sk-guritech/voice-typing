@@ -28,7 +28,10 @@ Download the file for your computer, open it, and set up an API key in the gear 
 | --- | --- | --- | --- |
 | Windows x64 | WebView2 Runtime | Double-click the `.exe`. | ○ Verified |
 | Linux x64 | GTK 3 and WebKitGTK 4.1 | Extract the `.tar.gz` and run `voice-typing`. | × Unverified (Ubuntu container tested) |
-| macOS | macOS 13 or later | Extract the Apple silicon (arm64) or Intel (x64) ZIP and open `Voice Typing.app`. | △ Launch and synthetic-audio self-test passed on an Intel Mac (macOS 15.7.9). Apple silicon launch verified in CI. |
+| macOS (Intel) | macOS 13 or later | Extract the x64 ZIP and open `Voice Typing.app`. | ○ Verified on macOS 15.7.9 |
+| macOS (Apple silicon) | macOS 13 or later | Extract the arm64 ZIP and open `Voice Typing.app`. | × No physical Mac tested (launch verified in CI) |
+
+On an Intel Mac, the release ZIP passed the launch and synthetic-audio tests. Dictation with a real microphone and automatic pasting were verified with a newer build from `main`.
 
 ## Quick start
 
