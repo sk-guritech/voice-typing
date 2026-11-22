@@ -27,11 +27,11 @@ Download the file for your computer, open it, and set up an API key in the gear 
 | OS | Requirements | Launch | Verification |
 | --- | --- | --- | --- |
 | Windows x64 | WebView2 Runtime | Double-click the `.exe`. | ○ Verified |
-| Linux x64 | GTK 3 and WebKitGTK 4.1 | Extract the `.tar.gz` and run `voice-typing`. | △ Virtual microphone and clipboard tested in an Ubuntu container |
+| Linux x64 | GTK 3, WebKitGTK 4.1, and an X11 session for automatic typing | Extract the `.tar.gz` and run `voice-typing`. | △ Automatic typing tested with a virtual microphone in an Ubuntu Xfce container |
 | macOS (Intel) | macOS 13 or later | Extract the x64 ZIP and open `Voice Typing.app`. | ○ Verified on macOS 15.7.9 |
 | macOS (Apple silicon) | macOS 13 or later | Extract the arm64 ZIP and open `Voice Typing.app`. | × No physical Mac tested (launch verified in CI) |
 
-Dictation with a physical microphone and automatic pasting were tested on an Intel Mac. The Linux test used a virtual microphone and a simulated transcription response.
+Dictation with a physical microphone and automatic typing were tested on an Intel Mac. Linux automatic typing is available in builds from `main`. The Linux test used a virtual microphone and a simulated transcription response. Automatic typing on Wayland is currently unsupported.
 
 ## Quick start
 
@@ -39,11 +39,11 @@ Dictation with a physical microphone and automatic pasting were tested on an Int
 
    <img src="docs/settings-en.png" width="280" alt="Voice Typing Settings in English">
 
-2. **Speak.** On Windows and macOS, put the cursor where you want the text. On Linux, focus the panel. Press <kbd>Page Down</kbd> and speak when the blue waveform moves.
+2. **Speak.** Put the cursor where you want the text, press <kbd>Page Down</kbd>, and speak when the blue waveform moves.
 
    <img src="docs/recording.png" width="170" alt="Blue waveform while dictating">
 
-3. **Enter the text.** Press <kbd>Page Down</kbd> again to finish. On Linux, paste the result from the clipboard.
+3. **Enter the text.** Press <kbd>Page Down</kbd> again to enter what you said.
 
 ### macOS permissions
 

@@ -27,11 +27,11 @@
 | OS | 必要な環境 | 起動方法 | 動作確認 |
 | --- | --- | --- | --- |
 | Windows x64 | WebView2 Runtime | `.exe` をダブルクリックします。 | ○ 確認済み |
-| Linux x64 | GTK 3、WebKitGTK 4.1 | `.tar.gz` を展開し、`voice-typing` を起動します。 | △ Ubuntu コンテナで仮想マイクと貼り付けを確認 |
+| Linux x64 | GTK 3、WebKitGTK 4.1、自動入力には X11 セッション | `.tar.gz` を展開し、`voice-typing` を起動します。 | △ Ubuntu の Xfce コンテナで仮想マイクから自動入力まで確認 |
 | macOS（Intel） | macOS 13 以降 | x64 用の ZIP を展開し、`Voice Typing.app` を開きます。 | ○ macOS 15.7.9 で確認済み |
 | macOS（Apple Silicon） | macOS 13 以降 | arm64 用の ZIP を展開し、`Voice Typing.app` を開きます。 | × 実機未確認（CI で起動確認済み） |
 
-Intel Mac の実機で、マイクでの音声入力と自動貼り付けを確認しました。Linux の検証には仮想マイクとテスト用の認識応答を使いました。
+Intel Mac の実機で、マイクでの音声入力と自動入力を確認しました。Linux の自動入力は `main` のビルドで利用できます。検証には仮想マイクとテスト用の認識応答を使いました。Wayland での自動入力は現在未対応です。
 
 ## 使い方
 
@@ -39,11 +39,11 @@ Intel Mac の実機で、マイクでの音声入力と自動貼り付けを確�
 
    <img src="docs/settings.png" width="280" alt="Voice Typing の設定画面">
 
-2. **話す。** Windows と macOS では入力欄にカーソルを置き、Linux では音声入力パネルをクリックします。<kbd>Page Down</kbd> を押し、青い波形が動いたら話します。
+2. **話す。** 入力欄にカーソルを置いて <kbd>Page Down</kbd> を押し、青い波形が動いたら話します。
 
    <img src="docs/recording.png" width="170" alt="音声入力中の青い波形">
 
-3. **文字を入力する。** <kbd>Page Down</kbd> をもう一度押して確定します。Linux ではクリップボードから貼り付けます。
+3. **文字を入力する。** <kbd>Page Down</kbd> をもう一度押すと、話した内容が入力されます。
 
 ### macOSの権限
 

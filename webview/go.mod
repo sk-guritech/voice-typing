@@ -4,6 +4,7 @@ go 1.27.4
 
 require (
 	github.com/gorilla/websocket v1.5.3
+	github.com/jezek/xgb v1.3.1
 	github.com/wailsapp/wails/v2 v2.17.1
 	github.com/zalando/go-keyring v0.2.8
 	golang.org/x/sys v0.48.0
