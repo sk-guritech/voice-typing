@@ -7,7 +7,7 @@
 <p align="center"><strong>Type with your voice using a single shortcut.</strong></p>
 
 <p align="center">
-  <a href="https://ko-fi.com/skguritech"><img src="docs/kofi-button.png" width="196" alt="Support Voice Typing on Ko-fi"></a>
+  <a href="https://ko-fi.com/skguritech"><img src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" height="36" alt="Support Voice Typing on Ko-fi"></a>
 </p>
 
 <p align="center">

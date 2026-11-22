@@ -7,7 +7,7 @@
 <p align="center"><strong>ショートカットひとつで、話した言葉を文字入力。</strong></p>
 
 <p align="center">
-  <a href="https://ko-fi.com/skguritech"><img src="docs/kofi-button.png" width="196" alt="Ko-fi で Voice Typing の開発を応援する"></a>
+  <a href="https://ko-fi.com/skguritech"><img src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" height="36" alt="Ko-fi で Voice Typing の開発を応援する"></a>
 </p>
 
 <p align="center">
