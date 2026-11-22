@@ -7,6 +7,10 @@
 <p align="center"><strong>ショートカットひとつで、話した言葉を文字入力。</strong></p>
 
 <p align="center">
+  <a href="https://ofuse.me/fc3f74d2"><img src="https://img.shields.io/badge/OFUSE-%E9%96%8B%E7%99%BA%E3%82%92%E5%BF%9C%E6%8F%B4-226D91?style=for-the-badge&amp;label=%E2%99%A5%20OFUSE" alt="OFUSE で Voice Typing の開発を応援する"></a>
+</p>
+
+<p align="center">
   <a href="#準備">準備</a> · <a href="#ダウンロードと起動">ダウンロード</a> · <a href="#使い方">3ステップで使う</a> · <a href="#モデルと料金">モデルと料金</a> · <a href="README.md">English</a>
 </p>
 
@@ -70,10 +74,6 @@ Go 1.27.4 を使います。以下のコマンドは `webview/` で実行しま�
 - **macOS（macOS 13 以降）** — Apple のコマンドラインツールが入った Mac で `bash build-macos.sh` を実行します。
 
 </details>
-
-## 開発を応援する
-
-[OFUSE で応援する](https://ofuse.me/fc3f74d2)
 
 ## ライセンス
 
