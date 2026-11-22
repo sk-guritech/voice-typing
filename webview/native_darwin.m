@@ -170,10 +170,10 @@ static void layoutPermissionControls(NSView *controls, NSView *micRow, NSView *p
     [controls setFrameSize:NSMakeSize(permissionContentWidth, y + permissionRowHeight * 2 + 8)];
 }
 
-static void showPermissionSetup(void) {
+static bool showPermissionSetup(NSWindow *panel) {
     __block int missing = voiceMacMissingPermissions();
     if (missing == 0) {
-        return;
+        return true;
     }
 
     VoiceTypingPermissionActions *actions = [[VoiceTypingPermissionActions alloc] init];
@@ -268,8 +268,11 @@ static void showPermissionSetup(void) {
                                        "\nVoice Typing を終了して開き直してください。";
             [failure runModal];
             [failure release];
+            [panel makeKeyAndOrderFront:nil];
         });
+        return false;
     }
+    return true;
 }
 
 static void onMainThread(dispatch_block_t block) {
@@ -376,24 +379,25 @@ bool voicePlaceMacPanel(int width, int height, int windowWidth, int windowHeight
                 window.backgroundColor = NSColor.clearColor;
                 window.hasShadow = NO;
                 installMediaDelegate(window);
-                if (setupPermissions) {
-                    dispatch_async(dispatch_get_main_queue(), ^{ showPermissionSetup(); });
-                }
                 VoiceTypingMouseRegion *region = [[VoiceTypingMouseRegion alloc] initWithWindow:window];
-                if (region == nil) {
-                    return;
+                if (region != nil) {
+                    objc_setAssociatedObject(window, &mouseRegionKey, region, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+                    [region release];
                 }
-                objc_setAssociatedObject(window, &mouseRegionKey, region, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-                [region release];
+                int initialWidth = region != nil ? windowWidth : width;
+                int initialHeight = region != nil ? windowHeight : height;
                 NSRect visible = screen.visibleFrame;
-                CGFloat x = MAX(NSMinX(visible), NSMaxX(visible) - windowWidth - 24);
+                CGFloat x = MAX(NSMinX(visible), NSMaxX(visible) - initialWidth - 24);
                 CGFloat y = MAX(NSMinY(visible), NSMinY(visible) + 24);
-                [window setFrame:NSMakeRect(x, y, windowWidth, windowHeight) display:YES animate:NO];
+                [window setFrame:NSMakeRect(x, y, initialWidth, initialHeight) display:YES animate:NO];
             }
             VoiceTypingMouseRegion *region = objc_getAssociatedObject(window, &mouseRegionKey);
             if (region != nil) {
                 [region setWidth:width height:height];
                 placed = true;
+            }
+            if (startup && setupPermissions && showPermissionSetup(window)) {
+                [window makeKeyAndOrderFront:nil];
             }
             return;
         }

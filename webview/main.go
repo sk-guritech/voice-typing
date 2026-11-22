@@ -288,6 +288,7 @@ func main() {
 		Title: "音声入力",
 		Width: width, Height: height, DisableResize: goruntime.GOOS != "linux", Frameless: true,
 		AlwaysOnTop:      probe.prefs.AlwaysOnTop,
+		StartHidden:      goruntime.GOOS == "darwin" && !probe.IsSelfTest(),
 		BackgroundColour: &options.RGBA{},
 		AssetServer:      &assetserver.Options{Assets: assets},
 		Windows: &winoptions.Options{
