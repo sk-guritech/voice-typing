@@ -7,8 +7,8 @@
 <p align="center"><strong>Type with your voice using a single shortcut.</strong></p>
 
 <p align="center">
-  <a href="https://ko-fi.com/skguritech"><img src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" height="36" alt="Support Voice Typing on Ko-fi"></a>
-  <a href="https://ofuse.me/fc3f74d2/letter"><img src="docs/ofuse-support.png" height="36" alt="Support Voice Typing on OFUSE"></a>
+  <a href="https://ko-fi.com/skguritech"><img src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" width="191" height="48" alt="Support Voice Typing on Ko-fi"></a>
+  <a href="https://ofuse.me/fc3f74d2/letter"><img src="docs/ofuse-support.png" width="191" height="48" alt="Support Voice Typing on OFUSE"></a>
 </p>
 
 <p align="center">

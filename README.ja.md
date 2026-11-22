@@ -7,8 +7,8 @@
 <p align="center"><strong>ショートカットひとつで、話した言葉を文字入力。</strong></p>
 
 <p align="center">
-  <a href="https://ko-fi.com/skguritech"><img src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" height="36" alt="Ko-fi で Voice Typing の開発を応援する"></a>
-  <a href="https://ofuse.me/fc3f74d2/letter"><img src="docs/ofuse-support.png" height="36" alt="OFUSE で Voice Typing の開発を応援する"></a>
+  <a href="https://ko-fi.com/skguritech"><img src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" width="191" height="48" alt="Ko-fi で Voice Typing の開発を応援する"></a>
+  <a href="https://ofuse.me/fc3f74d2/letter"><img src="docs/ofuse-support.png" width="191" height="48" alt="OFUSE で Voice Typing の開発を応援する"></a>
 </p>
 
 <p align="center">
