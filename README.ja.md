@@ -28,7 +28,7 @@
 | --- | --- | --- | --- |
 | Windows x64 | WebView2 Runtime | `.exe` をダブルクリックします。 | ○ 確認済み |
 | Linux x64 | GTK 3、WebKitGTK 4.1 | `.tar.gz` を展開し、`voice-typing` を起動します。 | × 未確認（Ubuntu コンテナで確認済み） |
-| macOS | macOS 13 以降 | Apple Silicon（arm64）用または Intel（x64）用の ZIP を展開し、`Voice Typing.app` を開きます。 | × Mac 実機で未確認 |
+| macOS | macOS 13 以降 | Apple Silicon（arm64）用または Intel（x64）用の ZIP を展開し、`Voice Typing.app` を開きます。 | △ Intel Mac（macOS 15.7.9）で起動・合成音の自己テストを確認。Apple Silicon は CI で起動確認。 |
 
 ## 使い方
 
