@@ -44,7 +44,7 @@ Download the file for your computer, open it, and set up an API key in the gear 
 
 ### macOS permissions
 
-In **System Settings → Privacy & Security**, allow **Microphone** for dictation. For macOS builds with automatic pasting, also allow **Accessibility**. Reopen Voice Typing after granting access.
+In **System Settings → Privacy & Security**, allow **Microphone** for dictation. For macOS builds with automatic pasting, also allow **Accessibility**. You can set up both permissions before reopening Voice Typing.
 
 If automatic pasting stops after replacing an ad hoc-signed build, remove the old Voice Typing entry from **Accessibility**, add the current `Voice Typing.app`, and reopen it. [Apple's Accessibility guide](https://support.apple.com/guide/mac-help/allow-accessibility-apps-to-access-your-mac-mh43185/mac)
 
