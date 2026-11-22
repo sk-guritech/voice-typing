@@ -84,13 +84,14 @@
   }
 
   function animateSettings(show) {
-    if (reduceMotion.matches) return Promise.resolve();
+    if (reduceMotion.matches) return null;
     const closed = { opacity: 0, transform: 'translateY(14px) scale(.975)', transformOrigin: 'right bottom' };
     const open = { opacity: 1, transform: 'translateY(0) scale(1)', transformOrigin: 'right bottom' };
     return section.animate(show ? [closed, open] : [open, closed], {
       duration: show ? 220 : 155,
       easing: show ? 'cubic-bezier(.18,.8,.26,1)' : 'cubic-bezier(.45,0,.8,.45)',
-    }).finished;
+      fill: 'both',
+    });
   }
 
   function showSettings(show) {
@@ -101,15 +102,23 @@
       context.hidden = true;
       if (show) {
         await resize(settingsSize);
+        if (nativePlacement && !fixedViewport && !reduceMotion.matches) {
+          // Let the resized native WebView paint before revealing the settings.
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        }
         if (!settingsOpen || !section.hidden) return;
         callbacks.visibility?.(true);
-        await animateSettings(true);
+        const animation = animateSettings(true);
+        await animation?.finished;
+        animation?.cancel();
       } else {
         if (!section.hidden) {
-          gear.focus();
+          if (section.contains(document.activeElement)) gear.focus({ preventScroll: true });
           section.inert = true;
-          await animateSettings(false);
+          const animation = animateSettings(false);
+          await animation?.finished;
           callbacks.visibility?.(false);
+          animation?.cancel();
           section.inert = false;
         }
         if (!settingsOpen) await resize(compact);

@@ -69,7 +69,55 @@ static void requestPastePermission(void) {
     }
 }
 
-static void showPermissionSetup(bool english) {
+static void relaunchForPermissions(void) {
+    static bool relaunching;
+    if (relaunching) {
+        return;
+    }
+    NSTask *task = [[NSTask alloc] init];
+    task.executableURL = [NSURL fileURLWithPath:@"/bin/sh"];
+    NSString *waitAndOpen = @"for i in $(/usr/bin/seq 1 50); do "
+                            "if ! kill -0 \"$1\" 2>/dev/null; then exec /usr/bin/open -n \"$2\"; fi; "
+                            "/bin/sleep 0.1; done";
+    task.arguments = @[@"-c", waitAndOpen,
+        @"voice-typing-relaunch", [NSString stringWithFormat:@"%d", getpid()], NSBundle.mainBundle.bundlePath];
+    relaunching = [task launchAndReturnError:NULL];
+    [task release];
+    if (relaunching) {
+        [NSApp terminate:nil];
+    }
+}
+
+static void waitForPermissions(NSWindow *window, bool english) {
+    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:180];
+    NSTimer *timer = [NSTimer timerWithTimeInterval:0.7 repeats:YES block:^(NSTimer *check) {
+        if ([AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio] == AVAuthorizationStatusAuthorized &&
+            CGPreflightPostEventAccess()) {
+            [check invalidate];
+            relaunchForPermissions();
+        } else if ([deadline timeIntervalSinceNow] <= 0) {
+            [check invalidate];
+        }
+    }];
+    [NSRunLoop.mainRunLoop addTimer:timer forMode:NSRunLoopCommonModes];
+
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = english ? @"Restart after granting permissions" : @"権限を許可したら再起動";
+    alert.informativeText = english
+        ? @"Voice Typing will restart when macOS confirms access. If it stays open after you grant access, click Restart and check."
+        : @"macOS が許可を確認すると自動で再起動します。許可後も画面が変わらなければ「再起動して確認」を押してください。";
+    [alert addButtonWithTitle:english ? @"Restart and check" : @"再起動して確認"];
+    [alert addButtonWithTitle:english ? @"Later" : @"あとで"];
+    [alert beginSheetModalForWindow:window completionHandler:^(NSModalResponse response) {
+        [timer invalidate];
+        if (response == NSAlertFirstButtonReturn) {
+            relaunchForPermissions();
+        }
+    }];
+    [alert release];
+}
+
+static void showPermissionSetup(NSWindow *window, bool english) {
     AVAuthorizationStatus microphone = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
     bool needsMicrophone = microphone != AVAuthorizationStatusAuthorized;
     bool needsAccessibility = !CGPreflightPostEventAccess();
@@ -84,7 +132,9 @@ static void showPermissionSetup(bool english) {
     if (needsAccessibility) {
         [instructions addObject:english ? @"Allow Accessibility for automatic pasting." : @"自動貼り付けには「アクセシビリティ」を許可してください。"];
     }
-    [instructions addObject:english ? @"Then quit and reopen Voice Typing." : @"許可したら、Voice Typing を終了して開き直してください。"];
+    [instructions addObject:english
+        ? @"Voice Typing will restart after macOS confirms access."
+        : @"macOS が許可を確認したら、Voice Typing が自動で再起動します。"];
 
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = english ? @"Voice Typing permissions" : @"Voice Typing の権限設定";
@@ -96,6 +146,7 @@ static void showPermissionSetup(bool english) {
     if (response != NSAlertFirstButtonReturn) {
         return;
     }
+    waitForPermissions(window, english);
     if (microphone == AVAuthorizationStatusNotDetermined) {
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {
             if (needsAccessibility) {
@@ -137,7 +188,7 @@ bool voicePlaceMacPanel(int width, int height, bool startup, bool setupPermissio
                 window.hasShadow = NO;
                 installMediaDelegate(window);
                 if (setupPermissions) {
-                    dispatch_async(dispatch_get_main_queue(), ^{ showPermissionSetup(english); });
+                    dispatch_async(dispatch_get_main_queue(), ^{ showPermissionSetup(window, english); });
                 }
             }
             NSRect visible = screen.visibleFrame;
@@ -146,7 +197,7 @@ bool voicePlaceMacPanel(int width, int height, bool startup, bool setupPermissio
             CGFloat bottom = startup ? NSMinY(visible) + 24 : NSMinY(previous);
             CGFloat x = MAX(NSMinX(visible), MIN(right, NSMaxX(visible)) - width);
             CGFloat y = MAX(NSMinY(visible), MIN(bottom, NSMaxY(visible) - height));
-            [window setFrame:NSMakeRect(x, y, width, height) display:YES animate:NO];
+            [window setFrame:NSMakeRect(x, y, width, height) display:startup animate:NO];
             placed = true;
             return;
         }
