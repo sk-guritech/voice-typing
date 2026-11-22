@@ -5,7 +5,6 @@ window.voiceLocale = (() => {
     language: ['表示言語', 'Language'],
     provider: ['認識サービス', 'Service'],
     model: ['モデル', 'Model'],
-    legacyModels: ['提供終了予定', 'Scheduled for retirement'],
     keyLabel: ['API キー', 'API key'],
     keyPlaceholder: ['API キーを入力', 'Enter an API key'],
     keySaved: ['設定済み', 'API key saved'],

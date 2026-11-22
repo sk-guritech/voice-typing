@@ -6,7 +6,6 @@ const gear = document.querySelector('#open-settings');
 const form = document.querySelector('#settings');
 const provider = document.querySelector('#provider');
 const model = document.querySelector('#model');
-const legacyModels = document.createElement('optgroup');
 const language = document.querySelector('#language');
 const alwaysOnTop = document.querySelector('#always-on-top');
 const key = document.querySelector('#key');
@@ -24,7 +23,6 @@ let modelOptions;
 let selectedModels;
 
 function renderControls() {
-  legacyModels.label = settingsText('legacyModels');
   key.placeholder = settingsText(keyPresent ? 'keySaved' : 'keyPlaceholder');
   reveal.textContent = settingsText(key.type === 'text' ? 'hide' : 'show');
   shortcut.textContent = capturing ? settingsText('pressKey') : selectedShortcut;
@@ -35,14 +33,7 @@ function renderControls() {
 function renderModels() {
   if (!modelOptions) return;
   const service = provider.value;
-  const options = modelOptions[service].map(id => new Option(id, id));
-  if (service === 'openai') {
-    const [current, ...legacy] = options;
-    legacyModels.replaceChildren(...legacy);
-    model.replaceChildren(current, legacyModels);
-  } else {
-    model.replaceChildren(...options);
-  }
+  model.replaceChildren(...modelOptions[service].map(id => new Option(id, id)));
   model.value = selectedModels[service];
 }
 
