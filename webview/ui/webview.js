@@ -17,6 +17,7 @@
   panel.before(context);
 
   let size = compact;
+  let nativePlacement = false;
   let fixedViewport = false;
   let resizing = Promise.resolve();
   let settingsOpen = false;
@@ -62,10 +63,12 @@
   function resize(target) {
     resizing = resizing.then(async () => {
       if (size === target) return;
-      if (fixedViewport && await backend.PlacePanel(...target, false)) {
+      if (nativePlacement && await backend.PlacePanel(...target, false)) {
         size = target;
+        if (!fixedViewport) await waitForViewport(target);
         return;
       }
+      nativePlacement = false;
       fixedViewport = false;
       const { x, y } = await native.WindowGetPosition();
       const left = window.screen.availLeft ?? 0;
@@ -340,8 +343,9 @@
   document.addEventListener('DOMContentLoaded', async () => {
     const screen = window.screen;
     const usesFixedBounds = await backend.FixedPanelBounds();
-    fixedViewport = usesFixedBounds && await backend.PlacePanel(...compact, true);
-    if (!fixedViewport) {
+    nativePlacement = await backend.PlacePanel(...compact, true);
+    fixedViewport = usesFixedBounds && nativePlacement;
+    if (!nativePlacement) {
       if (usesFixedBounds) native.WindowSetSize(...compact);
       native.WindowSetPosition((screen.availLeft ?? 0) + screen.availWidth - compact[0] - 24,
         (screen.availTop ?? 0) + screen.availHeight - compact[1] - 24);

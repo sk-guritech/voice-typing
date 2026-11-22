@@ -294,7 +294,7 @@ func main() {
 			DisableFramelessWindowDecorations: true,
 			WindowClassName:                   windowClassName,
 		},
-		Mac:        &macoptions.Options{WebviewIsTransparent: true, WindowIsTranslucent: true, Preferences: &macoptions.Preferences{EnableAutoplayWithoutUserAction: macoptions.Enabled}},
+		Mac:        &macoptions.Options{WebviewIsTransparent: true, Preferences: &macoptions.Preferences{EnableAutoplayWithoutUserAction: macoptions.Enabled}},
 		Linux:      &linuxoptions.Options{Icon: appIcon, WindowIsTranslucent: true, WebviewGpuPolicy: linuxoptions.WebviewGpuPolicyNever},
 		OnStartup:  func(ctx context.Context) { probe.ctx = ctx },
 		OnShutdown: func(ctx context.Context) { probe.stopShortcut(); probe.Cancel() },
