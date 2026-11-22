@@ -7,6 +7,10 @@
 <p align="center"><strong>Type with your voice using a single shortcut.</strong></p>
 
 <p align="center">
+  <a href="https://ko-fi.com/skguritech"><img src="https://img.shields.io/badge/-Support%20development-226D91?style=for-the-badge&amp;logo=kofi&amp;logoColor=white&amp;label=Ko-fi" alt="Support Voice Typing on Ko-fi"></a>
+</p>
+
+<p align="center">
   <a href="#get-an-api-key">Get an API key</a> · <a href="#download-and-run">Download and run</a> · <a href="#quick-start">Quick start</a> · <a href="#models-and-pricing">Models and pricing</a> · <a href="README.ja.md">日本語</a>
 </p>
 
