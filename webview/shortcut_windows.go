@@ -119,7 +119,7 @@ func startNativeShortcut(onPress func()) nativeShortcut {
 				}
 				ok, _, _ := registerHotkey.Call(0, next, modifiers|modNoRepeat, key)
 				if ok == 0 {
-					request.reply <- errors.New("Windows でショートカットを登録できませんでした。別のキーを選んでください。")
+					request.reply <- errors.New("ui.shortcutRegister")
 					continue
 				}
 				if registered != 0 {
@@ -139,18 +139,18 @@ func (h *hotkeyThread) set(shortcut string) error {
 	select {
 	case h.requests <- request:
 	case <-h.done:
-		return errors.New("ショートカットを利用できません。")
+		return errors.New("ui.shortcutUnavailable")
 	}
 	ok, _, _ := postHotkeyMsg.Call(uintptr(h.id), wmSetHotkey, 0, 0)
 	if ok == 0 {
 		<-h.requests
-		return errors.New("ショートカットを利用できません。")
+		return errors.New("ui.shortcutUnavailable")
 	}
 	select {
 	case result := <-request.reply:
 		return result
 	case <-h.done:
-		return errors.New("ショートカットを利用できません。")
+		return errors.New("ui.shortcutUnavailable")
 	}
 }
 

@@ -1,6 +1,8 @@
 (() => {
   const native = window.runtime;
   const backend = window.go.main.Probe;
+  const locale = window.voiceLocale;
+  const t = locale.t;
   const compact = [180, 69];
   const settingsSize = [382, 396];
   const menuSize = [180, 202];
@@ -10,7 +12,7 @@
   const panel = document.querySelector('.floating-panel');
   const context = document.createElement('nav');
   context.className = 'panel-menu';
-  context.setAttribute('aria-label', '音声入力メニュー');
+  context.dataset.l10nAria = 'menu';
   context.hidden = true;
   panel.before(context);
 
@@ -21,6 +23,8 @@
   let settingsTransition = Promise.resolve();
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
   let config;
+  let savedLanguage = 'ja';
+  let languageWrite = Promise.resolve();
   let state = 'idle';
   let lastError = '';
   let current;
@@ -30,6 +34,13 @@
   let waveformSeen = false;
   let timeout;
   let testFinished = false;
+
+  function applyLanguage(language) {
+    locale.set(language);
+    native.WindowSetTitle(t('appTitle'));
+    callbacks.state?.(state);
+    callbacks.language?.(language);
+  }
 
   function waitForViewport([width, height]) {
     const ready = () => Math.abs(window.innerWidth - width) <= 1 && Math.abs(window.innerHeight - height) <= 1;
@@ -136,7 +147,7 @@
     current = task;
     lastError = '';
     setState('connecting');
-    timeout = setTimeout(() => fail('マイクの準備がタイムアウトしました。'), 20000);
+    timeout = setTimeout(() => fail('ui.micTimeout'), 20000);
     const start = () => { if (current === task) callbacks.start?.(task.id); };
     if (fromShortcut) {
       void backend.CaptureTarget().then(start).catch(error => {
@@ -175,7 +186,7 @@
       }
       const bytes = value.byteLength;
       if (task.queuedBytes + bytes > 384_000) {
-        fail('音声の送信が追いつきませんでした。');
+        fail('ui.queueFull');
         return;
       }
       const block = btoa(String.fromCharCode(...new Uint8Array(value)));
@@ -193,9 +204,9 @@
         return;
       }
       queue(task, () => backend.Finish());
-      timeout = setTimeout(() => fail('応答がタイムアウトしました。'), config?.provider === 'openai' ? 93000 : 12000);
+      timeout = setTimeout(() => fail('ui.responseTimeout'), config?.provider === 'openai' ? 93000 : 12000);
     } else if (kind === 'error') {
-      fail('マイクを開けませんでした。マイクへのアクセスを確認してください。');
+      fail('ui.micUnavailable');
     }
   }
 
@@ -207,11 +218,11 @@
       return;
     }
     const entries = [
-      [current ? '音声入力を終了' : '音声入力を開始', toggle],
-      [section.hidden ? '設定…' : '設定を閉じる', () => showSettings(section.hidden)],
-      ...(lastError ? [[lastError, null]] : []),
-      ['最小化', native.WindowMinimise],
-      ['終了', native.Quit],
+      [t(current ? 'stopRecording' : 'startRecording'), toggle],
+      [t(section.hidden ? 'openSettings' : 'closeSettings'), () => showSettings(section.hidden)],
+      ...(lastError ? [[locale.error(lastError), null]] : []),
+      [t('minimise'), native.WindowMinimise],
+      [t('quit'), native.Quit],
     ];
     context.replaceChildren();
     for (const [label, action] of entries) {
@@ -270,12 +281,26 @@
       return { ...settings, error: settings.error || lastError };
     },
     key: (provider, reveal) => backend.KeyInfo(provider, reveal),
+    setLanguage: language => {
+      applyLanguage(language);
+      const write = languageWrite.then(async () => {
+        await backend.SetLanguage(language);
+        savedLanguage = language;
+      });
+      const pending = write.catch(error => {
+        if (languageWrite !== pending) return;
+        applyLanguage(savedLanguage);
+        callbacks.languageError?.(error);
+      });
+      languageWrite = pending;
+    },
     save: async form => {
       const result = await backend.Save(form);
       if (result.ok) config = await backend.Config();
       return result;
     },
     close: () => void showSettings(false),
+    onLanguage: (fn, onError) => { callbacks.language = fn; callbacks.languageError = onError; },
     onVisibility: fn => { callbacks.visibility = fn; },
   };
   native.EventsOn('probe:shortcut', () => {
@@ -326,6 +351,8 @@
       hotkeyTest = await backend.IsHotkeyTest();
       await backend.StartShortcut();
       config = await backend.Config();
+      savedLanguage = config.language;
+      applyLanguage(savedLanguage);
       if (!selfTest) return;
       void backend.TraceSelfTest(`Startup ${window.innerWidth}×${window.innerHeight}`);
       if (!section.hidden || panel.offsetWidth !== 164 || panel.offsetHeight !== 52) {
@@ -348,14 +375,38 @@
       input.value = 'x'.repeat(2001);
       input.dispatchEvent(new Event('input'));
       form.requestSubmit();
-      await waitFor('Save error stays visible', () => !section.hidden && section.querySelector('#message').textContent.includes('形式'));
-      input.value = '';
-      input.dispatchEvent(new Event('input'));
+      await waitFor('Save error stays visible', () => !section.hidden && section.querySelector('#message').textContent === t('invalidKey'));
+      const language = section.querySelector('#language');
+      function selectLanguage(value) {
+        language.value = value;
+        language.dispatchEvent(new Event('change'));
+      }
+      selectLanguage('en');
+      if (section.hidden || document.documentElement.lang !== 'en' ||
+          section.querySelector('h1').textContent !== 'Settings' ||
+          section.querySelector('#message').textContent !== 'The API key format is invalid.' ||
+          input.value !== 'x'.repeat(2001) ||
+          document.querySelector('#status').getAttribute('aria-label') !== 'Ready') {
+        throw new Error('Selecting English did not immediately translate the open settings');
+      }
+      await languageWrite;
+      if ((await backend.Config()).language !== 'en') {
+        throw new Error('The new language was not saved immediately');
+      }
+      gear.click();
+      await settingsTransition;
+      gear.click();
+      await waitFor('Saved language in settings', () => !section.hidden && language.value === 'en');
+      await settingsTransition;
+      selectLanguage('ja');
+      if (document.documentElement.lang !== 'ja') throw new Error('Selecting Japanese did not immediately translate the UI');
+      await languageWrite;
       form.requestSubmit();
       if (!reduceMotion.matches) {
         await waitFor('Settings closing animation', () => section.getAnimations().some(animation => animation.effect.getKeyframes().at(-1).opacity === '0'));
       }
-      await waitFor('Settings closed', () => section.hidden && viewportIs(fixedViewport ? settingsSize : compact));
+      await waitFor('Settings closed in Japanese', () => section.hidden && document.documentElement.lang === 'ja' &&
+        viewportIs(fixedViewport ? settingsSize : compact));
       void backend.TraceSelfTest('Settings closed');
       if (hotkeyTest) {
         if (!config.globalShortcut) throw new Error(config.error);

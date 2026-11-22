@@ -8,7 +8,7 @@
 <p align="center">ショートカットで録音し、Soniox または OpenAI で文字にします。</p>
 
 <p align="center">
-  <a href="#起動">起動</a> · <a href="#使い方">3ステップで使う</a> · <a href="README.md">English</a>
+  <a href="#起動">起動</a> · <a href="#準備">準備</a> · <a href="#使い方">3ステップで使う</a> · <a href="README.md">English</a>
 </p>
 
 ## 起動
@@ -23,9 +23,16 @@
 
 macOS 版はアドホック署名済みです。
 
+## 準備
+
+使いたい認識サービスの API キーを取得します。
+
+- **Soniox** — ログイン後、プロジェクトを選び、**API keys** でキーを作成します。[Soniox Console](https://console.soniox.com/)
+- **OpenAI** — ログイン後、**Create new secret key** を選び、発行されたキーをコピーします。[OpenAI API keys](https://platform.openai.com/api-keys)
+
 ## 使い方
 
-1. **設定する。** 歯車を開き、Soniox または OpenAI の API キーを入力して**保存**します。ショートカットと前面表示もここで変更できます。
+1. **設定する。** 歯車を開き、Soniox または OpenAI の API キーを入力して**保存**します。**表示言語**は選んだ時点で切り替わります。ショートカットと前面表示もここで変更できます。
 
    <img src="docs/settings.png" width="280" alt="Voice Typing の設定画面">
 

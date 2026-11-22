@@ -4,10 +4,8 @@ const settingsButton = document.querySelector('#open-settings');
 const symbol = document.querySelector('#symbol');
 const wave = document.querySelector('#wave');
 const bars = Array.from(wave.children);
-const states = {
-  idle: ['○', '待機中'], connecting: ['', 'マイク準備中'], listening: ['', '録音中'],
-  finishing: ['⋯', '確定中'], pasted: ['✓', '貼り付け完了'], copied: ['▣', 'コピー完了'],
-  error: ['⚠', 'エラー'],
+const stateIcons = {
+  idle: '○', connecting: '', listening: '', finishing: '⋯', pasted: '✓', copied: '▣', error: '⚠',
 };
 let active;
 let currentState = 'idle';
@@ -15,10 +13,9 @@ let smooth = 0;
 
 function display(state) {
   currentState = state;
-  const [icon, label] = states[state];
-  symbol.textContent = icon;
+  symbol.textContent = stateIcons[state];
   status.dataset.state = state;
-  status.setAttribute('aria-label', label);
+  status.setAttribute('aria-label', window.voiceLocale.t(state));
   wave.hidden = state !== 'connecting' && state !== 'listening';
   symbol.hidden = !wave.hidden;
 }

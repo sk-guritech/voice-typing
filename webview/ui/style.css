@@ -126,6 +126,8 @@ h1 { font-size: 17px; margin: 0; }
 .keep-above input { width: 16px; height: 16px; min-height: 0; margin: 0; accent-color: var(--panel-focus); }
 .keep-above input:disabled + span { color: var(--panel-icon); }
 form { display: grid; gap: 6px; }
+.settings-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.settings-field { display: grid; gap: 6px; }
 label { margin-top: 7px; font-weight: 600; }
 input, select, output, button { font: inherit; color: inherit; }
 input, select, output, button { background: var(--panel-field); border: 1px solid var(--panel-border); border-radius: 6px; min-height: 35px; box-sizing: border-box; padding: 5px 10px; }

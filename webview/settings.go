@@ -20,6 +20,7 @@ type Preferences struct {
 	Provider    string `json:"provider"`
 	Shortcut    string `json:"shortcut"`
 	AlwaysOnTop bool   `json:"alwaysOnTop"`
+	Language    string `json:"language"`
 }
 
 type SettingsForm struct {
@@ -34,7 +35,7 @@ func validProvider(provider string) bool {
 }
 
 func (p *Probe) loadPreferences() {
-	p.prefs = Preferences{Provider: "soniox", Shortcut: "PageDown", AlwaysOnTop: true}
+	p.prefs = Preferences{Provider: "soniox", Shortcut: "PageDown", AlwaysOnTop: true, Language: "ja"}
 	if p.IsSelfTest() {
 		return
 	}
@@ -44,6 +45,9 @@ func (p *Probe) loadPreferences() {
 	}
 	settings := p.prefs
 	if json.Unmarshal(data, &settings) == nil && validProvider(settings.Provider) && shortcutPattern.MatchString(settings.Shortcut) {
+		if settings.Language != "en" {
+			settings.Language = "ja"
+		}
 		p.prefs = settings
 	}
 }
@@ -54,6 +58,7 @@ func (p *Probe) Config() map[string]any {
 	return map[string]any{
 		"provider": p.prefs.Provider, "shortcut": p.prefs.Shortcut,
 		"alwaysOnTop": p.prefs.AlwaysOnTop, "canKeepAbove": true,
+		"language":       p.prefs.Language,
 		"globalShortcut": p.shortcut != nil && p.shortcutError == "",
 		"error":          p.shortcutError,
 	}
@@ -68,7 +73,7 @@ func (p *Probe) KeyInfo(provider string, reveal bool) map[string]any {
 		return map[string]any{"present": false}
 	}
 	if err != nil {
-		return map[string]any{"error": "OS の資格情報ストアを利用できません。"}
+		return map[string]any{"error": "ui.credentialStore"}
 	}
 	value := ""
 	if reveal {
@@ -77,18 +82,47 @@ func (p *Probe) KeyInfo(provider string, reveal bool) map[string]any {
 	return map[string]any{"present": key != "", "value": value}
 }
 
-func (p *Probe) Save(form SettingsForm) map[string]any {
-	failure := func(message string) map[string]any { return map[string]any{"error": message} }
-	if !validProvider(form.Provider) || !shortcutPattern.MatchString(form.Shortcut) {
-		return failure("設定を確認してください。")
+func (p *Probe) writePreferences(settings Preferences) error {
+	data, err := json.Marshal(settings)
+	if err != nil {
+		return err
 	}
-	key := strings.TrimSpace(form.Key)
-	if strings.ContainsAny(key, "\r\n") || len(key) > 2000 {
-		return failure("API キーの形式を確認してください。")
+	if err := os.MkdirAll(filepath.Dir(p.settingsPath), 0700); err != nil {
+		return err
+	}
+	return os.WriteFile(p.settingsPath, data, 0600)
+}
+
+func (p *Probe) SetLanguage(language string) error {
+	if language != "ja" && language != "en" {
+		return errors.New("ui.invalidSettings")
 	}
 	p.settingsMu.Lock()
 	defer p.settingsMu.Unlock()
-	settings := Preferences{Provider: form.Provider, Shortcut: form.Shortcut, AlwaysOnTop: form.AlwaysOnTop}
+	if language == p.prefs.Language {
+		return nil
+	}
+	settings := p.prefs
+	settings.Language = language
+	if err := p.writePreferences(settings); err != nil {
+		return errors.New("ui.saveLanguage")
+	}
+	p.prefs = settings
+	return nil
+}
+
+func (p *Probe) Save(form SettingsForm) map[string]any {
+	failure := func(message string) map[string]any { return map[string]any{"error": message} }
+	if !validProvider(form.Provider) || !shortcutPattern.MatchString(form.Shortcut) {
+		return failure("ui.invalidSettings")
+	}
+	key := strings.TrimSpace(form.Key)
+	if strings.ContainsAny(key, "\r\n") || len(key) > 2000 {
+		return failure("ui.invalidKey")
+	}
+	p.settingsMu.Lock()
+	defer p.settingsMu.Unlock()
+	settings := Preferences{Provider: form.Provider, Shortcut: form.Shortcut, AlwaysOnTop: form.AlwaysOnTop, Language: p.prefs.Language}
 	changedShortcut := p.shortcut != nil && (settings.Shortcut != p.prefs.Shortcut || p.shortcutError != "")
 	if changedShortcut {
 		if err := p.shortcut.set(settings.Shortcut); err != nil {
@@ -104,17 +138,11 @@ func (p *Probe) Save(form SettingsForm) map[string]any {
 			}
 		}
 	}()
-	if !p.IsSelfTest() {
-		if key != "" && keyring.Set(keyringService, form.Provider, key) != nil {
-			return failure("API キーを OS の資格情報ストアに保存できませんでした。")
-		}
-		data, _ := json.Marshal(settings)
-		if err := os.MkdirAll(filepath.Dir(p.settingsPath), 0700); err != nil {
-			return failure("設定を保存できませんでした。")
-		}
-		if err := os.WriteFile(p.settingsPath, data, 0600); err != nil {
-			return failure("設定を保存できませんでした。")
-		}
+	if !p.IsSelfTest() && key != "" && keyring.Set(keyringService, form.Provider, key) != nil {
+		return failure("ui.saveKey")
+	}
+	if err := p.writePreferences(settings); err != nil {
+		return failure("ui.saveSettings")
 	}
 	p.prefs = settings
 	if changedShortcut {

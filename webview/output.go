@@ -73,7 +73,7 @@ func (p *Probe) publishResult(text string) {
 			}
 		}
 		if err := runtime.ClipboardSetText(p.ctx, text); err != nil {
-			runtime.EventsEmit(p.ctx, "probe:error", "クリップボードにコピーできませんでした。")
+			runtime.EventsEmit(p.ctx, "probe:error", "ui.clipboard")
 			return
 		}
 		pasted = target != nil && target.paste(text)

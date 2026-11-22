@@ -32,10 +32,10 @@ func newOpenAIRecording(ctx context.Context, key string, rate int) *openAIRecord
 
 func (r *openAIRecording) add(block []byte) error {
 	if r.finished {
-		return errors.New("録音は終了しました。")
+		return errors.New("ui.recordingEnded")
 	}
 	if len(r.pcm)+len(block) > min(24_000_000, r.rate*2*600) {
-		return errors.New("短く区切って録音してください。")
+		return errors.New("ui.recordingLimit")
 	}
 	r.pcm = append(r.pcm, block...)
 	return nil
@@ -84,17 +84,17 @@ func (r *openAIRecording) transcribe() (string, error) {
 	request.Header.Set("Content-Type", form.FormDataContentType())
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
-		return "", errors.New("OpenAI への送信に失敗しました。")
+		return "", errors.New("ui.openaiSend")
 	}
 	defer response.Body.Close()
 	if response.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("OpenAI がエラーを返しました（%d）。", response.StatusCode)
+		return "", fmt.Errorf("ui.openaiError:%d", response.StatusCode)
 	}
 	var result struct {
 		Text string `json:"text"`
 	}
 	if json.NewDecoder(io.LimitReader(response.Body, 5_000_000)).Decode(&result) != nil {
-		return "", errors.New("OpenAI の応答を読み込めませんでした。")
+		return "", errors.New("ui.openaiRead")
 	}
 	return strings.TrimSpace(result.Text), nil
 }
@@ -103,7 +103,7 @@ func (p *Probe) finishOpenAI(recording *openAIRecording) error {
 	p.mu.Lock()
 	if p.openAI != recording || recording.finished {
 		p.mu.Unlock()
-		return errors.New("録音は終了しました。")
+		return errors.New("ui.recordingEnded")
 	}
 	recording.finished = true
 	p.mu.Unlock()

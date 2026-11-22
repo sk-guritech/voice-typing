@@ -8,7 +8,7 @@
 <p align="center">Use a shortcut to dictate with Soniox or OpenAI.</p>
 
 <p align="center">
-  <a href="#run">Run the app</a> · <a href="#quick-start">Quick start</a> · <a href="README.ja.md">日本語</a>
+  <a href="#run">Run the app</a> · <a href="#get-an-api-key">Get an API key</a> · <a href="#quick-start">Quick start</a> · <a href="README.ja.md">日本語</a>
 </p>
 
 ## Run
@@ -23,9 +23,16 @@ Build locally using the commands below. The packages go in [`release/`](release/
 
 The macOS app is ad hoc signed.
 
+## Get an API key
+
+Create a key for the speech recognition service you want to use.
+
+- **Soniox** — Sign in, select a project, and create a key under **API keys**. [Soniox Console](https://console.soniox.com/)
+- **OpenAI** — Sign in, choose **Create new secret key**, and copy the key. [OpenAI API keys](https://platform.openai.com/api-keys)
+
 ## Quick start
 
-1. **Set up.** Open the gear, choose Soniox or OpenAI, enter the API key, and click **Save** (保存). The gear also lets you change the shortcut and keep the panel on top.
+1. **Set up.** Open the gear, choose Soniox or OpenAI, enter the API key, and click **Save** (保存). Selecting **Language** (表示言語) switches the UI immediately. The gear also lets you change the shortcut and keep the panel on top.
 
    <img src="docs/settings.png" width="280" alt="Voice Typing settings">
 

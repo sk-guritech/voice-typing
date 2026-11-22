@@ -8,45 +8,57 @@
 <body class="panel">
   <section class="inline-settings" id="settings-panel" aria-labelledby="settings-heading" hidden>
     <header class="settings-header">
-      <h1 id="settings-heading">設定</h1>
+      <h1 id="settings-heading" data-l10n="settings">設定</h1>
       <label class="keep-above">
         <input id="always-on-top" type="checkbox" form="settings">
-        <span>常に手前に表示</span>
+        <span data-l10n="alwaysOnTop">常に手前に表示</span>
       </label>
     </header>
     <form id="settings">
-      <label for="provider">認識サービス</label>
-      <select id="provider"><option value="soniox">Soniox</option><option value="openai">OpenAI</option></select>
-      <label for="key">API キー</label>
+      <div class="settings-pair">
+        <div class="settings-field">
+          <label for="provider" data-l10n="provider">認識サービス</label>
+          <select id="provider"><option value="soniox">Soniox</option><option value="openai">OpenAI</option></select>
+        </div>
+        <div class="settings-field">
+          <label for="language" data-l10n="language">表示言語</label>
+          <select id="language">
+            <option value="ja" lang="ja">日本語</option>
+            <option value="en" lang="en">English</option>
+          </select>
+        </div>
+      </div>
+      <label for="key" data-l10n="keyLabel">API キー</label>
       <div class="row">
         <input id="key" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="API キーを入力">
         <button id="reveal" type="button">表示</button>
       </div>
-      <label for="shortcut">ショートカット</label>
+      <label for="shortcut" data-l10n="shortcut">ショートカット</label>
       <div class="row">
         <output id="shortcut" for="capture"></output>
         <button id="capture" type="button">変更</button>
       </div>
       <div class="footer">
         <p id="message" role="status"></p>
-        <button type="submit">保存</button>
+        <button type="submit" data-l10n="save">保存</button>
       </div>
     </form>
   </section>
-  <main class="floating-panel" aria-label="音声入力">
+  <main class="floating-panel" aria-label="音声入力" data-l10n-aria="appTitle">
     <div id="status" role="img" aria-label="待機中">
       <span id="symbol" aria-hidden="true">○</span>
       <span id="wave" aria-hidden="true" hidden><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
     </div>
     <div class="panel-actions">
-      <button id="open-settings" type="button" aria-label="音声入力の設定" aria-controls="settings-panel" aria-expanded="false">
+      <button id="open-settings" type="button" aria-label="音声入力の設定" data-l10n-aria="settingsButton" aria-controls="settings-panel" aria-expanded="false">
         <span class="gear-icon" aria-hidden="true"></span>
       </button>
-      <button id="quit-app" type="button" aria-label="アプリを終了">
+      <button id="quit-app" type="button" aria-label="アプリを終了" data-l10n-aria="quitButton">
         <span aria-hidden="true">×</span>
       </button>
     </div>
   </main>
+  <script src="i18n.js"></script>
   <script src="webview.js"></script>
   <script src="panel.js"></script>
   <script src="settings.js"></script>

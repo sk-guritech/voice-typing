@@ -1,8 +1,11 @@
 const settingsApi = window.voiceSettings;
+const settingsLocale = window.voiceLocale;
+const settingsText = settingsLocale.t;
 const section = document.querySelector('#settings-panel');
 const gear = document.querySelector('#open-settings');
 const form = document.querySelector('#settings');
 const provider = document.querySelector('#provider');
+const language = document.querySelector('#language');
 const alwaysOnTop = document.querySelector('#always-on-top');
 const key = document.querySelector('#key');
 const reveal = document.querySelector('#reveal');
@@ -13,23 +16,40 @@ let selectedShortcut = 'PageDown';
 let capturing = false;
 let changing = 0;
 let opening = 0;
+let keyPresent = false;
+let messageCode = '';
+
+function renderControls() {
+  key.placeholder = settingsText(keyPresent ? 'keySaved' : 'keyPlaceholder');
+  reveal.textContent = settingsText(key.type === 'text' ? 'hide' : 'show');
+  shortcut.textContent = capturing ? settingsText('pressKey') : selectedShortcut;
+  capture.textContent = settingsText(capturing ? 'cancel' : 'change');
+  message.textContent = settingsLocale.error(messageCode);
+}
+
+function showMessage(code = '') {
+  messageCode = code;
+  message.textContent = settingsLocale.error(code);
+}
 
 async function refreshKey() {
   const request = ++changing;
   key.value = '';
   key.type = 'password';
-  reveal.textContent = '表示';
+  keyPresent = false;
+  renderControls();
   const result = await settingsApi.key(provider.value, false);
   if (request !== changing || !result) return;
-  key.placeholder = result.present ? '設定済み' : 'API キーを入力';
-  if (result.error) message.textContent = result.error;
+  keyPresent = Boolean(result.present);
+  if (result.error) messageCode = result.error;
+  renderControls();
 }
 
 reveal.addEventListener('click', async () => {
   if (key.type === 'text') {
     key.type = 'password';
     if (!key.dataset.edited) key.value = '';
-    reveal.textContent = '表示';
+    reveal.textContent = settingsText('show');
     return;
   }
   const request = changing;
@@ -37,25 +57,29 @@ reveal.addEventListener('click', async () => {
     const result = await settingsApi.key(provider.value, true);
     if (request !== changing || !result) return;
     if (result.error) {
-      message.textContent = result.error;
+      showMessage(result.error);
       return;
     }
-    if (!key.value) key.value = result.value;
+    if (!key.value) key.value = result.value ?? '';
   }
   key.type = 'text';
-  reveal.textContent = '隠す';
+  reveal.textContent = settingsText('hide');
 });
 key.addEventListener('input', () => { key.dataset.edited = 'yes'; });
 provider.addEventListener('change', () => {
   delete key.dataset.edited;
-  message.textContent = '';
+  showMessage();
   void refreshKey();
 });
+language.addEventListener('change', () => settingsApi.setLanguage(language.value));
+settingsApi.onLanguage(value => {
+  language.value = value;
+  renderControls();
+}, showMessage);
 
 capture.addEventListener('click', () => {
   capturing = !capturing;
-  shortcut.textContent = capturing ? 'キーを押してください' : selectedShortcut;
-  capture.textContent = capturing ? '取消' : '変更';
+  renderControls();
 });
 
 const keyNames = { ' ': 'Space', ArrowUp: 'Up', ArrowDown: 'Down', ArrowLeft: 'Left', ArrowRight: 'Right' };
@@ -77,15 +101,14 @@ document.addEventListener('keydown', event => {
     if (event.altKey) modifiers.push('Alt');
     if (event.shiftKey) modifiers.push('Shift');
     if (!modifiers.length && /^[A-Z0-9]$/.test(name)) {
-      message.textContent = '文字キーには修飾キーを組み合わせてください。';
+      showMessage('ui.modifierRequired');
       return;
     }
     selectedShortcut = [...modifiers, name].join('+');
-    message.textContent = '';
+    showMessage();
   }
   capturing = false;
-  shortcut.textContent = selectedShortcut;
-  capture.textContent = '変更';
+  renderControls();
 }, true);
 
 form.addEventListener('submit', async event => {
@@ -104,9 +127,9 @@ form.addEventListener('submit', async event => {
     });
     if (request !== opening) return;
     if (result?.ok) settingsApi.close();
-    else message.textContent = result?.error ?? '設定を保存できませんでした。';
+    else showMessage(result?.error || 'ui.saveSettings');
   } catch {
-    if (request === opening) message.textContent = '設定を保存できませんでした。';
+    if (request === opening) showMessage('ui.saveSettings');
   } finally {
     submit.disabled = false;
   }
@@ -119,8 +142,7 @@ async function load(request) {
   alwaysOnTop.checked = config.alwaysOnTop;
   alwaysOnTop.disabled = !config.canKeepAbove;
   selectedShortcut = config.shortcut;
-  shortcut.textContent = selectedShortcut;
-  message.textContent = config.error;
+  showMessage(config.error);
   await refreshKey();
 }
 settingsApi.onVisibility(visible => {
@@ -128,12 +150,12 @@ settingsApi.onVisibility(visible => {
   ++changing;
   section.hidden = !visible;
   capturing = false;
-  capture.textContent = '変更';
   key.value = '';
   key.type = 'password';
+  keyPresent = false;
   delete key.dataset.edited;
-  reveal.textContent = '表示';
-  message.textContent = '';
+  messageCode = '';
+  renderControls();
   if (visible) {
     void load(request);
   } else {

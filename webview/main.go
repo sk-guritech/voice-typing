@@ -84,16 +84,16 @@ func (p *Probe) ReportSelfTestFailure(message string) {
 func (p *Probe) Connect(rate int) error {
 	provider, key, err := p.sessionSettings()
 	if err != nil || key == "" || strings.ContainsAny(key, "\r\n") {
-		return errors.New("歯車の設定から API キーを保存してください。")
+		return errors.New("ui.missingKey")
 	}
 	if rate != 16000 {
-		return errors.New("Unsupported sample rate")
+		return errors.New("ui.sampleRate")
 	}
 
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if p.socket != nil || p.openAI != nil {
-		return errors.New("Already connected")
+		return errors.New("ui.alreadyConnected")
 	}
 	if provider == "openai" {
 		p.openAI = newOpenAIRecording(p.ctx, key, rate)
@@ -106,14 +106,14 @@ func (p *Probe) Connect(rate int) error {
 		if resp != nil {
 			resp.Body.Close()
 		}
-		return errors.New("Soniox に接続できませんでした。")
+		return errors.New("ui.sonioxConnect")
 	}
 	if err := conn.WriteJSON(map[string]any{
 		"model": "stt-rt-v6", "audio_format": "pcm_s16le", "sample_rate": rate,
 		"num_channels": 1, "language_hints": []string{"ja", "en"},
 	}); err != nil {
 		conn.Close()
-		return errors.New("Soniox の設定を送信できませんでした。")
+		return errors.New("ui.sonioxConfigure")
 	}
 	p.socket = conn
 	go p.read(conn)
@@ -123,7 +123,7 @@ func (p *Probe) Connect(rate int) error {
 func (p *Probe) Audio(encoded string) error {
 	data, err := base64.StdEncoding.DecodeString(encoded)
 	if err != nil || len(data) > 10240 {
-		return errors.New("Invalid audio block")
+		return errors.New("ui.audioBlock")
 	}
 	p.mu.Lock()
 	if p.openAI != nil {
@@ -162,7 +162,7 @@ func (p *Probe) write(kind int, data []byte) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if p.socket == nil {
-		return errors.New("Soniox との接続が切れました。")
+		return errors.New("ui.sonioxDisconnected")
 	}
 	p.socket.SetWriteDeadline(time.Now().Add(5 * time.Second))
 	return p.socket.WriteMessage(kind, data)
@@ -192,12 +192,12 @@ func (p *Probe) read(conn *websocket.Conn) {
 			active := p.socket == conn
 			p.mu.Unlock()
 			if active {
-				runtime.EventsEmit(p.ctx, "probe:error", "Soniox との接続が切れました。")
+				runtime.EventsEmit(p.ctx, "probe:error", "ui.sonioxDisconnected")
 			}
 			return
 		}
 		if response.ErrorCode != 0 {
-			runtime.EventsEmit(p.ctx, "probe:error", fmt.Sprintf("Soniox エラー (%d)", response.ErrorCode))
+			runtime.EventsEmit(p.ctx, "probe:error", fmt.Sprintf("ui.sonioxError:%d", response.ErrorCode))
 			return
 		}
 		for _, token := range response.Tokens {
@@ -262,6 +262,7 @@ func main() {
 	}
 	if len(os.Args) == 3 && (os.Args[1] == "--self-test" || os.Args[1] == "--self-test-hotkey" || os.Args[1] == "--self-test-paste") {
 		probe.testLog = os.Args[2]
+		probe.settingsPath = probe.testLog + ".settings.json"
 		probe.testPaste = os.Args[1] == "--self-test-paste"
 		probe.testHotkey = probe.testPaste || os.Args[1] == "--self-test-hotkey"
 		profile = filepath.Join(filepath.Dir(probe.testLog), "webview-profile")
