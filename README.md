@@ -7,7 +7,7 @@
 <p align="center"><strong>Type with your voice using a single shortcut.</strong></p>
 
 <p align="center">
-  <a href="#get-an-api-key">Get an API key</a> · <a href="#download-and-run">Download and run</a> · <a href="#quick-start">Quick start</a> · <a href="README.ja.md">日本語</a>
+  <a href="#get-an-api-key">Get an API key</a> · <a href="#download-and-run">Download and run</a> · <a href="#quick-start">Quick start</a> · <a href="#models-and-pricing">Models and pricing</a> · <a href="README.ja.md">日本語</a>
 </p>
 
 ## Get an API key
@@ -40,6 +40,21 @@ Download the file for your computer, open it, and set up an API key in the gear 
    <img src="docs/recording.png" width="170" alt="Blue waveform while dictating">
 
 3. **Enter the text.** Press <kbd>Page Down</kbd> again to enter what you said (Linux and macOS copy it to the clipboard).
+
+## Models and pricing
+
+Prices are in US dollars per hour of audio, checked in November 2026. Rates for token-billed models are estimates. [Soniox pricing](https://soniox.com/pricing#speech-to-text-api-pricing) · [OpenAI pricing](https://platform.openai.com/pricing)
+
+| Service | Model | API cost (USD/hour) | Processing in this app | Accuracy characteristics |
+| --- | --- | ---: | --- | --- |
+| Soniox | [`stt-rt-v6`](https://docs.soniox.com/stt/models#november-3-2026) (default) | About 0.12 | During recording | Better recognition of accents and mixed-language speech than v5 |
+| Soniox | [`stt-rt-v5`](https://docs.soniox.com/stt/models#june-16-2026) | About 0.12 | During recording | Better recognition of noisy and multilingual audio than v4 |
+| OpenAI | [`gpt-transcribe`](https://developers.openai.com/api/docs/models/gpt-transcribe) (default) | 0.27 | After recording | OpenAI's recommended high-accuracy model for recorded audio |
+| OpenAI | [`gpt-4o-transcribe`](https://developers.openai.com/api/docs/models/gpt-4o-transcribe) | About 0.36 | After recording | Fewer word errors and better language recognition than Whisper |
+| OpenAI | [`gpt-4o-mini-transcribe`](https://developers.openai.com/api/docs/models/gpt-4o-mini-transcribe) | About 0.18 | After recording | Smaller model with fewer word errors than Whisper |
+| OpenAI | [`whisper-1`](https://developers.openai.com/api/docs/models/whisper-1) | 0.36 | After recording | General-purpose multilingual recognition |
+
+Voice Typing outputs text after recording ends for every model. The accuracy descriptions come from the providers' documentation.
 
 ## Report a problem
 
