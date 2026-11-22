@@ -31,7 +31,7 @@
 | macOS（Intel） | macOS 13 以降 | x64 用の ZIP を展開し、`Voice Typing.app` を開きます。 | ○ macOS 15.7.9 で確認済み |
 | macOS（Apple Silicon） | macOS 13 以降 | arm64 用の ZIP を展開し、`Voice Typing.app` を開きます。 | × 実機未確認（CI で起動確認済み） |
 
-Intel Mac の実機で、マイクでの音声入力と自動入力を確認しました。Linux の自動入力は `main` のビルドで利用できます。検証には仮想マイクとテスト用の認識応答を使いました。Wayland での自動入力は現在未対応です。
+Intel Mac の実機で、マイクでの音声入力と自動入力を確認しました。Linux の検証には仮想マイクとテスト用の認識応答を使いました。Wayland での自動入力は現在未対応です。
 
 ## 使い方
 

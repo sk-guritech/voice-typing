@@ -31,7 +31,7 @@ Download the file for your computer, open it, and set up an API key in the gear 
 | macOS (Intel) | macOS 13 or later | Extract the x64 ZIP and open `Voice Typing.app`. | ○ Verified on macOS 15.7.9 |
 | macOS (Apple silicon) | macOS 13 or later | Extract the arm64 ZIP and open `Voice Typing.app`. | × No physical Mac tested (launch verified in CI) |
 
-Dictation with a physical microphone and automatic typing were tested on an Intel Mac. Linux automatic typing is available in builds from `main`. The Linux test used a virtual microphone and a simulated transcription response. Automatic typing on Wayland is currently unsupported.
+Dictation with a physical microphone and automatic typing were tested on an Intel Mac. The Linux test used a virtual microphone and a simulated transcription response. Automatic typing on Wayland is currently unsupported.
 
 ## Quick start
 
