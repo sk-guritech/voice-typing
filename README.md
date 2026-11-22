@@ -47,9 +47,9 @@ Prices are in US dollars per hour of audio, checked in November 2026. Rates for 
 
 | Service | Model | API cost (USD/hour) | Accuracy characteristics |
 | --- | --- | ---: | --- |
-| Soniox | [`stt-rt-v6`](https://docs.soniox.com/stt/models#november-3-2026) (default) | About 0.12 | Better recognition of accents and mixed-language speech than v5 |
+| Soniox | [`stt-rt-v6`](https://docs.soniox.com/stt/models#november-3-2026) (app default) | About 0.12 | Better recognition of accents and mixed-language speech than v5 |
 | Soniox | [`stt-rt-v5`](https://docs.soniox.com/stt/models#june-16-2026) | About 0.12 | Better recognition of noisy and multilingual audio than v4 |
-| OpenAI | [`gpt-transcribe`](https://developers.openai.com/api/docs/models/gpt-transcribe) (default) | 0.27 | OpenAI's recommended high-accuracy model for recorded audio |
+| OpenAI | [`gpt-transcribe`](https://developers.openai.com/api/docs/models/gpt-transcribe) | 0.27 | OpenAI's recommended high-accuracy model for recorded audio |
 | OpenAI | [`gpt-4o-transcribe`](https://developers.openai.com/api/docs/models/gpt-4o-transcribe) | About 0.36 | Fewer word errors and better language recognition than Whisper |
 | OpenAI | [`gpt-4o-mini-transcribe`](https://developers.openai.com/api/docs/models/gpt-4o-mini-transcribe) | About 0.18 | Smaller model with fewer word errors than Whisper |
 | OpenAI | [`whisper-1`](https://developers.openai.com/api/docs/models/whisper-1) | 0.36 | General-purpose multilingual recognition |

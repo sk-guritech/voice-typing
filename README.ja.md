@@ -47,9 +47,9 @@
 
 | サービス | モデル | API 料金（米ドル／時間） | 認識精度の特徴 |
 | --- | --- | ---: | --- |
-| Soniox | [`stt-rt-v6`](https://docs.soniox.com/stt/models#november-3-2026)（初期値） | 約 0.12 | v5 より、アクセントのある発話や言語が混ざる発話の認識を改善 |
+| Soniox | [`stt-rt-v6`](https://docs.soniox.com/stt/models#november-3-2026)（アプリの初期設定） | 約 0.12 | v5 より、アクセントのある発話や言語が混ざる発話の認識を改善 |
 | Soniox | [`stt-rt-v5`](https://docs.soniox.com/stt/models#june-16-2026) | 約 0.12 | v4 より、雑音のある音声や多言語の認識を改善 |
-| OpenAI | [`gpt-transcribe`](https://developers.openai.com/api/docs/models/gpt-transcribe)（初期値） | 0.27 | 録音済み音声向けに OpenAI が推奨する高精度モデル |
+| OpenAI | [`gpt-transcribe`](https://developers.openai.com/api/docs/models/gpt-transcribe) | 0.27 | 録音済み音声向けに OpenAI が推奨する高精度モデル |
 | OpenAI | [`gpt-4o-transcribe`](https://developers.openai.com/api/docs/models/gpt-4o-transcribe) | 約 0.36 | Whisper より単語の誤りを減らし、言語の判定を改善 |
 | OpenAI | [`gpt-4o-mini-transcribe`](https://developers.openai.com/api/docs/models/gpt-4o-mini-transcribe) | 約 0.18 | Whisper より単語の誤りを抑えた小型モデル |
 | OpenAI | [`whisper-1`](https://developers.openai.com/api/docs/models/whisper-1) | 0.36 | 多言語に対応する汎用モデル |
