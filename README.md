@@ -2,56 +2,35 @@
 
 English · [日本語](README.ja.md)
 
-<img src="webview/assets/icon.png" width="64" height="64" alt="Voice Typing app icon">
+<img src="webview/assets/icon.png" width="48" height="48" alt="Voice Typing icon">
 
-Voice Typing turns speech into text using Soniox or OpenAI. It's a desktop app built with Go and Wails.
+Turn speech into text with Soniox or OpenAI.
 
-## Launch the app
+## Run
 
-Open the file for your OS and CPU in [`release/`](release/).
+Open the build for your OS in [`release/`](release/).
 
-| OS | How to launch |
-| --- | --- |
-| Windows x64 | Double-click the `.exe`. Windows needs WebView2. |
-| Linux x64 | Extract the `.tar.gz` and run `voice-typing`. GTK 3 and WebKitGTK 4.1 are required. |
-| macOS | Extract the Apple Silicon (arm64) or Intel (x64) ZIP and open `Voice Typing.app`. The app is ad hoc signed. Testing on a physical Mac is still pending. |
+- **Windows x64** — Run the `.exe` with WebView2 installed.
+- **Linux x64** — Extract the archive and run `voice-typing`. Requires GTK 3 and WebKitGTK 4.1.
+- **macOS** — Extract the ZIP for Apple Silicon or Intel and open `Voice Typing.app`. The app is ad hoc signed and awaits testing on a physical Mac.
 
-## How to use it
+## Use
 
-These screenshots were captured from the Windows release executable. The recording screenshot uses a synthetic test tone.
+1. Open the gear, pick a service, enter its API key, and click **Save** (保存).
+2. Put the cursor in the target field on Windows. On Linux and macOS, focus the panel. Press **Page Down** and speak when the blue waveform moves.
+3. Press **Page Down** again to finish. Windows pastes into the original field if it still has focus and recording started with the shortcut. The result is also available on the clipboard.
 
-### 1. Set up speech recognition
+<img src="docs/settings.png" width="280" alt="Voice Typing settings"> <img src="docs/recording.png" width="170" alt="Blue waveform during recording">
 
-Click the gear on the small panel. Choose **Soniox** or **OpenAI**, enter your API key for that service, and click **Save** (保存). Allow microphone access if prompted.
+Windows app screenshots. The recording example uses a test tone.
 
-On Windows and Linux, the settings panel closes after a successful save. If saving fails, the panel stays open and shows the error.
+<details>
+<summary>Build locally</summary>
 
-<img src="docs/settings.png" width="410" alt="Settings panel with fields for the speech provider, API key, and shortcut, plus an Always on top checkbox and a Save button">
-
-Click **Change** (変更) to choose another shortcut, then click **Save**. You can also toggle **Always on top** (常に手前に表示) here. The app stores your API key in the operating system's credential store and sends recorded audio to your selected service.
-
-### 2. Record
-
-1. On Windows, put the cursor in the field where you want the text. On macOS and Linux, focus the Voice Typing panel.
-2. Press **Page Down**. A faint waveform means the microphone is getting ready. **Start speaking when the blue waveform moves.**
-3. Press **Page Down** again when you're done and wait for the result.
-
-<img src="docs/recording.png" width="204" alt="Recording panel showing a blue waveform beside the settings and quit buttons">
-
-The current macOS ZIP shows a circular icon while the microphone is getting ready. Start speaking once the blue waveform moves.
-
-You can also start or stop recording by right-clicking the gear. Click **×** to quit the app.
-
-### 3. Enter the text
-
-On Windows, recording with the global shortcut pastes the result into the field that had focus when recording started. If you switch fields mid-recording, start recording from the right-click menu, or use macOS or Linux, paste the result from the clipboard.
-
-If an error icon appears, open the gear menu and read the message in settings.
-
-## Build locally
-
-Use Go 1.27.4 and run these commands from `webview/`.
+Use Go 1.27.4 from `webview/`.
 
 - **Windows** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-1.0.0-windows-x64.exe .`
-- **Linux** — With the GTK and WebKitGTK development libraries installed, run `go build -tags production,webkit2_41 -trimpath -ldflags "-s -w" -o voice-typing .`. For a Docker build, run `docker build -t voice-typing:linux .`.
-- **macOS** — On a Mac with the Apple command line tools installed, run `bash build-macos.sh`.
+- **Linux** — `docker build -t voice-typing:linux .`, or use `go build -tags production,webkit2_41 .` with the GTK and WebKitGTK development libraries installed.
+- **macOS** — Run `bash build-macos.sh` on a Mac with Apple command line tools installed.
+
+</details>
