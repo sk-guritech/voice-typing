@@ -1,30 +1,39 @@
-# Voice Typing
+<p align="center">
+  <img src="webview/assets/icon.png" width="104" height="104" alt="Voice Typing のアイコン">
+</p>
 
-[English](README.md) · 日本語
+<h1 align="center">Voice Typing</h1>
 
-<img src="webview/assets/icon.png" width="48" height="48" alt="Voice Typing のアイコン">
+<p align="center"><strong>小さなパネルで使える、デスクトップの音声入力。</strong></p>
+<p align="center">ショートカットで録音し、Soniox または OpenAI で文字にします。</p>
 
-Soniox または OpenAI で音声を文字にします。
+<p align="center">
+  <a href="#起動">起動</a> · <a href="#使い方">3ステップで使う</a> · <a href="README.md">English</a>
+</p>
 
 ## 起動
 
 [`release/`](release/) から、お使いの OS に合ったファイルを開きます。
 
-- **Windows x64** — WebView2 が入った PC で `.exe` を起動。
-- **Linux x64** — 展開して `voice-typing` を起動。GTK 3 と WebKitGTK 4.1 が必要です。
-- **macOS** — Apple Silicon または Intel 用の ZIP を展開し、`Voice Typing.app` を起動。アドホック署名済みで、Mac 実機での動作は未確認です。
+| OS | 必要な環境 | 起動方法 |
+| --- | --- | --- |
+| Windows x64 | WebView2 Runtime | `.exe` を起動します。 |
+| Linux x64 | GTK 3、WebKitGTK 4.1 | `.tar.gz` を展開し、`voice-typing` を起動します。 |
+| macOS（Apple Silicon / Intel） | macOS 13 以降 | ZIP を展開し、`Voice Typing.app` を開きます。 |
+
+macOS 版はアドホック署名済みで、Mac 実機での動作は未確認です。
 
 ## 使い方
 
-1. 歯車を開き、認識サービスを選んで API キーを入力し、**保存**します。
+1. **設定する。** 歯車を開き、Soniox または OpenAI の API キーを入力して**保存**します。ショートカットと前面表示もここで変更できます。
 
    <img src="docs/settings.png" width="280" alt="Voice Typing の設定画面">
 
-2. Windows は入力欄にカーソルを置き、Linux・macOS はパネルにフォーカスを置きます。**Page Down** を押し、青い波形が動いたら話します。
+2. **録音する。** Windows は入力欄にカーソルを置き、Linux・macOS はパネルにフォーカスを置きます。<kbd>Page Down</kbd> を押し、青い波形が動いたら話します。
 
    <img src="docs/recording.png" width="170" alt="録音中の青い波形">
 
-3. **Page Down** をもう一度押すと確定します。Windows でショートカットから録音し、同じ入力欄にフォーカスがあれば自動で貼り付けます。結果はクリップボードからも貼り付けられます。
+3. **文字を入力する。** <kbd>Page Down</kbd> をもう一度押します。Windows でショートカットから録音し、同じ入力欄にフォーカスがあれば自動で貼り付けます。結果はクリップボードからも貼り付けられます。
 
 <details>
 <summary>ローカルビルド</summary>

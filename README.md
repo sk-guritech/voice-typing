@@ -1,30 +1,39 @@
-# Voice Typing
+<p align="center">
+  <img src="webview/assets/icon.png" width="104" height="104" alt="Voice Typing icon">
+</p>
 
-English · [日本語](README.ja.md)
+<h1 align="center">Voice Typing</h1>
 
-<img src="webview/assets/icon.png" width="48" height="48" alt="Voice Typing icon">
+<p align="center"><strong>A small desktop panel for voice typing.</strong></p>
+<p align="center">Use a shortcut to dictate with Soniox or OpenAI.</p>
 
-Turn speech into text with Soniox or OpenAI.
+<p align="center">
+  <a href="#run">Run the app</a> · <a href="#quick-start">Quick start</a> · <a href="README.ja.md">日本語</a>
+</p>
 
 ## Run
 
 Open the build for your OS in [`release/`](release/).
 
-- **Windows x64** — Run the `.exe` with WebView2 installed.
-- **Linux x64** — Extract the archive and run `voice-typing`. Requires GTK 3 and WebKitGTK 4.1.
-- **macOS** — Extract the ZIP for Apple Silicon or Intel and open `Voice Typing.app`. The app is ad hoc signed and awaits testing on a physical Mac.
+| OS | Requirements | Launch |
+| --- | --- | --- |
+| Windows x64 | WebView2 Runtime | Run the `.exe`. |
+| Linux x64 | GTK 3 and WebKitGTK 4.1 | Extract the `.tar.gz` and run `voice-typing`. |
+| macOS (Apple Silicon or Intel) | macOS 13 or later | Extract the ZIP and open `Voice Typing.app`. |
 
-## Use
+The macOS app is ad hoc signed and awaits testing on a physical Mac.
 
-1. Open the gear, pick a service, enter its API key, and click **Save** (保存).
+## Quick start
+
+1. **Set up.** Open the gear, choose Soniox or OpenAI, enter the API key, and click **Save** (保存). The gear also lets you change the shortcut and keep the panel on top.
 
    <img src="docs/settings.png" width="280" alt="Voice Typing settings">
 
-2. Put the cursor in the target field on Windows. On Linux and macOS, focus the panel. Press **Page Down** and speak when the blue waveform moves.
+2. **Record.** On Windows, put the cursor where you want the text. On Linux and macOS, focus the panel. Press <kbd>Page Down</kbd> and speak when the blue waveform moves.
 
    <img src="docs/recording.png" width="170" alt="Blue waveform during recording">
 
-3. Press **Page Down** again to finish. Windows pastes into the original field if it still has focus and recording started with the shortcut. The result is also available on the clipboard.
+3. **Get the text.** Press <kbd>Page Down</kbd> again. When recording starts with the shortcut on Windows, the result is pasted into the original field if it still has focus. You can also paste the result from your clipboard.
 
 <details>
 <summary>Build locally</summary>
