@@ -8,8 +8,15 @@
 <p align="center">A small desktop panel powered by Soniox or OpenAI.</p>
 
 <p align="center">
-  <a href="#download-and-run">Download and run</a> · <a href="#get-an-api-key">Get an API key</a> · <a href="#quick-start">Quick start</a> · <a href="README.ja.md">日本語</a>
+  <a href="#get-an-api-key">Get an API key</a> · <a href="#download-and-run">Download and run</a> · <a href="#quick-start">Quick start</a> · <a href="README.ja.md">日本語</a>
 </p>
+
+## Get an API key
+
+Create a key for the speech recognition service you want to use.
+
+- **Soniox** — Sign in, select a project, and create a key under **API keys**. [Soniox Console](https://console.soniox.com/)
+- **OpenAI** — Sign in, choose **Create new secret key**, and copy the key. [OpenAI API keys](https://platform.openai.com/api-keys)
 
 ## Download and run
 
@@ -20,13 +27,6 @@ Download the v1.0.0 package for your computer, open it, and set up an API key in
 | Windows x64 | [EXE](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-x64.exe) | Double-click the file. | ○ Verified |
 | Linux x64 | [AppImage](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-linux-x64.AppImage) | Make it executable in file properties, then open it. | × Unverified |
 | macOS | [Apple Silicon ZIP](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-mac-arm64.zip) / [Intel ZIP](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-mac-x64.zip) | Extract the ZIP and open `Voice Typing.app`. | × Unverified on a physical Mac |
-
-## Get an API key
-
-Create a key for the speech recognition service you want to use.
-
-- **Soniox** — Sign in, select a project, and create a key under **API keys**. [Soniox Console](https://console.soniox.com/)
-- **OpenAI** — Sign in, choose **Create new secret key**, and copy the key. [OpenAI API keys](https://platform.openai.com/api-keys)
 
 ## Quick start
 

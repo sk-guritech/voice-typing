@@ -8,8 +8,15 @@
 <p align="center">Soniox または OpenAI を使える、小さなデスクトップパネル。</p>
 
 <p align="center">
-  <a href="#ダウンロードと起動">ダウンロード</a> · <a href="#準備">準備</a> · <a href="#使い方">3ステップで使う</a> · <a href="README.md">English</a>
+  <a href="#準備">準備</a> · <a href="#ダウンロードと起動">ダウンロード</a> · <a href="#使い方">3ステップで使う</a> · <a href="README.md">English</a>
 </p>
+
+## 準備
+
+使いたい認識サービスの API キーを取得します。
+
+- **Soniox** — ログイン後、プロジェクトを選び、**API keys** でキーを作成します。[Soniox Console](https://console.soniox.com/)
+- **OpenAI** — ログイン後、**Create new secret key** を選び、発行されたキーをコピーします。[OpenAI API keys](https://platform.openai.com/api-keys)
 
 ## ダウンロードと起動
 
@@ -20,13 +27,6 @@
 | Windows x64 | [EXE](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-x64.exe) | ファイルをダブルクリックします。 | ○ 確認済み |
 | Linux x64 | [AppImage](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-linux-x64.AppImage) | ファイルのプロパティで実行を許可してから開きます。 | × 未確認 |
 | macOS | [Apple Silicon 用 ZIP](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-mac-arm64.zip) / [Intel 用 ZIP](https://github.com/sk-guritech/voice-typing/releases/download/v1.0.0/Voice-Typing-1.0.0-mac-x64.zip) | ZIP を展開して `Voice Typing.app` を開きます。 | × Mac 実機で未確認 |
-
-## 準備
-
-使いたい認識サービスの API キーを取得します。
-
-- **Soniox** — ログイン後、プロジェクトを選び、**API keys** でキーを作成します。[Soniox Console](https://console.soniox.com/)
-- **OpenAI** — ログイン後、**Create new secret key** を選び、発行されたキーをコピーします。[OpenAI API keys](https://platform.openai.com/api-keys)
 
 ## 使い方
 
