@@ -6,7 +6,7 @@ Soniox または OpenAI で話した内容を文字にするデスクトップ�
 
 - **Windows x64**　`.exe` をダブルクリック。
 - **Linux x64**　`.AppImage` に `chmod +x` で実行権限を付けて起動。
-- **macOS**　Apple Silicon（arm64）または Intel（x64）の ZIP を展開。Apple の公証は未実施です。
+- **macOS**　Apple Silicon（arm64）または Intel（x64）の ZIP を展開。実機での動作は未確認です。Apple の公証は未実施です。
 
 ## 使い方
 
