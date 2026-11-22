@@ -202,14 +202,8 @@ static void showPermissionSetup(bool english) {
         [alert layout];
         [alert.window orderFrontRegardless];
         NSTimer *restart = [NSTimer timerWithTimeInterval:1.0 repeats:NO block:^(NSTimer *pending) {
-            if (NSApp.modalWindow == alert.window && !relaunchForPermissions()) {
-                alert.informativeText = english
-                    ? @"Voice Typing could not restart. Quit and reopen it to apply the permissions."
-                    : @"自動で再起動できませんでした。Voice Typing を終了して開き直してください。";
-                for (NSButton *button in alert.buttons) {
-                    button.enabled = YES;
-                }
-                [alert layout];
+            if (NSApp.modalWindow == alert.window) {
+                [NSApp stopModalWithCode:NSAlertFirstButtonReturn];
             }
         }];
         [NSRunLoop.mainRunLoop addTimer:restart forMode:NSModalPanelRunLoopMode];
@@ -217,6 +211,7 @@ static void showPermissionSetup(bool english) {
     [NSRunLoop.mainRunLoop addTimer:timer forMode:NSRunLoopCommonModes];
     [NSRunLoop.mainRunLoop addTimer:timer forMode:NSModalPanelRunLoopMode];
     NSModalResponse response = [alert runModal];
+    [alert.window orderOut:nil];
     [timer invalidate];
     if (probe.running) {
         [probe terminate];
@@ -225,7 +220,19 @@ static void showPermissionSetup(bool english) {
     [alert release];
     [actions release];
     if (response == NSAlertFirstButtonReturn) {
-        relaunchForPermissions();
+        // Quit the main Wails event loop after the permission dialog has unwound.
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (relaunchForPermissions()) {
+                return;
+            }
+            NSAlert *failure = [[NSAlert alloc] init];
+            failure.messageText = english ? @"Voice Typing could not restart" : @"Voice Typing を再起動できませんでした";
+            failure.informativeText = english
+                ? @"Quit and reopen Voice Typing to apply the permissions."
+                : @"Voice Typing を終了して開き直してください。";
+            [failure runModal];
+            [failure release];
+        });
     }
 }
 
