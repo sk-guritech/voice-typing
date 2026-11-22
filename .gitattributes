@@ -1,0 +1,2 @@
+*.sh text eol=lf
+webview/Dockerfile text eol=lf

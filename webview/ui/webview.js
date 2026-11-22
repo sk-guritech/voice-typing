@@ -287,12 +287,12 @@
   });
   native.EventsOn('probe:error', message => { if (current) fail(message); });
   native.EventsOn('probe:result', (text, pasted) => {
-    if (!text) {
-      fail('音声を認識できませんでした。');
-      return;
-    }
     clearTimeout(timeout);
     current = null;
+    if (!text) {
+      setState('idle');
+      return;
+    }
     setState(pasted ? 'pasted' : 'copied');
     if (selfTest) {
       if (!waveformSeen) {

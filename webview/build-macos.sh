@@ -9,7 +9,8 @@ case $(go env GOARCH) in
 esac
 
 app="../dist/macos-$arch/Voice Typing.app"
-archive="../release/Voice-Typing-1.0.0-macos-$arch.zip"
+version=$(plutil -extract CFBundleShortVersionString raw -o - Info.plist)
+archive="../release/Voice-Typing-$version-macos-$arch.zip"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources" ../release
 cp Info.plist "$app/Contents/Info.plist"
 cp assets/icon.icns "$app/Contents/Resources/icon.icns"

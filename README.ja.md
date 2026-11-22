@@ -13,7 +13,7 @@
 
 ## 起動
 
-[`release/`](release/) から、お使いの OS に合ったファイルを開きます。
+下の手順でビルドすると、配布ファイルが [`release/`](release/) に入ります。
 
 | OS | 必要な環境 | 起動方法 |
 | --- | --- | --- |
@@ -40,8 +40,8 @@ macOS 版はアドホック署名済みで、Mac 実機での動作は未確認�
 
 Go 1.27.4 で `webview/` から実行します。
 
-- **Windows** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-1.0.0-windows-x64.exe .`
-- **Linux** — `docker build -t voice-typing:linux .`。GTK と WebKitGTK の開発ライブラリがあれば `go build -tags production,webkit2_41 .` でもビルドできます。
+- **Windows** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-1.1.0-windows-x64.exe .`
+- **Linux（Bash）** — `docker build -t voice-typing:linux .` の後、`docker run --rm voice-typing:linux tar -cz -C /usr/local/bin voice-typing > ../release/Voice-Typing-1.1.0-linux-x64.tar.gz` を実行します。
 - **macOS** — Apple のコマンドラインツールが入った Mac で `bash build-macos.sh`。
 
 </details>

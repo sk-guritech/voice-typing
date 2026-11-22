@@ -13,7 +13,7 @@
 
 ## Run
 
-Open the build for your OS in [`release/`](release/).
+Build locally using the commands below. The packages go in [`release/`](release/).
 
 | OS | Requirements | Launch |
 | --- | --- | --- |
@@ -40,8 +40,8 @@ The macOS app is ad hoc signed and awaits testing on a physical Mac.
 
 Use Go 1.27.4 from `webview/`.
 
-- **Windows** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-1.0.0-windows-x64.exe .`
-- **Linux** — `docker build -t voice-typing:linux .`, or use `go build -tags production,webkit2_41 .` with the GTK and WebKitGTK development libraries installed.
+- **Windows** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-1.1.0-windows-x64.exe .`
+- **Linux (Bash)** — Run `docker build -t voice-typing:linux .`, then `docker run --rm voice-typing:linux tar -cz -C /usr/local/bin voice-typing > ../release/Voice-Typing-1.1.0-linux-x64.tar.gz`.
 - **macOS** — Run `bash build-macos.sh` on a Mac with Apple command line tools installed.
 
 </details>
