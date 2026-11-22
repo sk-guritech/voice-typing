@@ -96,7 +96,7 @@ static bool relaunchForPermissions(void) {
 @property(nonatomic) bool english;
 - (void)requestMicrophone:(id)sender;
 - (void)requestAccessibility:(id)sender;
-- (bool)refresh;
+- (bool)refreshWithAccessibility:(bool)accessibility;
 @end
 
 @implementation VoiceTypingPermissionActions
@@ -115,9 +115,8 @@ static bool relaunchForPermissions(void) {
     requestPastePermission();
 }
 
-- (bool)refresh {
+- (bool)refreshWithAccessibility:(bool)accessibility {
     bool microphone = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio] == AVAuthorizationStatusAuthorized;
-    bool accessibility = CGPreflightPostEventAccess();
     [self.microphoneButton setEnabled:!microphone];
     [self.accessibilityButton setEnabled:!accessibility];
     self.microphoneButton.title = self.english
@@ -132,8 +131,9 @@ static bool relaunchForPermissions(void) {
 @end
 
 static void showPermissionSetup(bool english) {
+    __block bool accessibilityAllowed = CGPreflightPostEventAccess();
     if ([AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio] == AVAuthorizationStatusAuthorized &&
-        CGPreflightPostEventAccess()) {
+        accessibilityAllowed) {
         return;
     }
 
@@ -143,7 +143,7 @@ static void showPermissionSetup(bool english) {
     NSButton *accessibility = [NSButton buttonWithTitle:@"" target:actions action:@selector(requestAccessibility:)];
     actions.microphoneButton = microphone;
     actions.accessibilityButton = accessibility;
-    [actions refresh];
+    [actions refreshWithAccessibility:accessibilityAllowed];
     NSStackView *controls = [NSStackView stackViewWithViews:@[microphone, accessibility]];
     controls.orientation = NSUserInterfaceLayoutOrientationVertical;
     controls.alignment = NSLayoutAttributeLeading;
@@ -160,8 +160,30 @@ static void showPermissionSetup(bool english) {
     alert.accessoryView = controls;
     [alert addButtonWithTitle:english ? @"Restart and check" : @"再起動して確認"];
     [alert addButtonWithTitle:english ? @"Later" : @"あとで"];
-    NSTimer *timer = [NSTimer timerWithTimeInterval:1.0 repeats:YES block:^(NSTimer *check) {
-        if (![actions refresh]) {
+    __block NSTask *probe = nil;
+    NSTimer *timer = [NSTimer timerWithTimeInterval:1.5 repeats:YES block:^(NSTimer *check) {
+        bool allowedHere = CGPreflightPostEventAccess();
+        if (probe != nil && !probe.running) {
+            if (probe.terminationReason == NSTaskTerminationReasonExit && probe.terminationStatus <= 1) {
+                accessibilityAllowed = probe.terminationStatus == 0;
+            }
+            [probe release];
+            probe = nil;
+        }
+        if (allowedHere) {
+            accessibilityAllowed = true;
+        }
+        if (![actions refreshWithAccessibility:accessibilityAllowed]) {
+            // A new process avoids the preflight result cached by the running app.
+            if (!allowedHere && probe == nil) {
+                probe = [[NSTask alloc] init];
+                probe.executableURL = NSBundle.mainBundle.executableURL;
+                probe.arguments = @[@"--check-paste-access"];
+                if (![probe launchAndReturnError:NULL]) {
+                    [probe release];
+                    probe = nil;
+                }
+            }
             return;
         }
         [check invalidate];
@@ -190,6 +212,10 @@ static void showPermissionSetup(bool english) {
     [NSRunLoop.mainRunLoop addTimer:timer forMode:NSModalPanelRunLoopMode];
     NSModalResponse response = [alert runModal];
     [timer invalidate];
+    if (probe.running) {
+        [probe terminate];
+    }
+    [probe release];
     [alert release];
     [actions release];
     if (response == NSAlertFirstButtonReturn) {

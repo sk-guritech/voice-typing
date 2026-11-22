@@ -27,6 +27,8 @@ var (
 const windowClassName = "VoiceTypingWebViewPanel"
 const fixedPanelBounds = true
 
+func pasteAccessGranted() bool { return false }
+
 type panelRect struct {
 	left, top, right, bottom int32
 }

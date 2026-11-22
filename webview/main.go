@@ -255,6 +255,13 @@ func fixture() *httptest.Server {
 }
 
 func main() {
+	if len(os.Args) == 2 && os.Args[1] == "--check-paste-access" {
+		if pasteAccessGranted() {
+			return
+		}
+		os.Exit(1)
+	}
+
 	probe := &Probe{endpoint: "wss://stt-rt.soniox.com/transcribe-websocket"}
 	userData, err := os.UserCacheDir()
 	if err != nil {
