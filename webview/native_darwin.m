@@ -128,25 +128,28 @@ static bool relaunchForPermissions(void) {
     bool accessibility = !(missing & accessibilityMissing);
     [self.microphoneButton setEnabled:!microphone];
     [self.accessibilityButton setEnabled:!accessibility];
-    self.microphoneButton.title = microphone ? @"許可済み / Allowed" : @"設定 / Set up";
-    self.accessibilityButton.title = accessibility ? @"許可済み / Allowed" : @"設定 / Set up";
+    self.microphoneButton.title = microphone ? @"Allowed\n許可済み" : @"Set up\n設定";
+    self.accessibilityButton.title = accessibility ? @"Allowed\n許可済み" : @"Set up\n設定";
     self.microphoneButton.accessibilityLabel = microphone
-        ? @"マイクは許可済み / Microphone allowed" : @"マイクを設定 / Set up Microphone";
+        ? @"Microphone allowed / マイクは許可済み" : @"Set up Microphone / マイクを設定";
     self.accessibilityButton.accessibilityLabel = accessibility
-        ? @"アクセシビリティは許可済み / Accessibility allowed" : @"アクセシビリティを設定 / Set up Accessibility";
+        ? @"Accessibility allowed / アクセシビリティは許可済み" : @"Set up Accessibility / アクセシビリティを設定";
 }
 
 @end
 
-static const CGFloat permissionContentWidth = 312;
-static const CGFloat permissionRowHeight = 38;
+static const CGFloat permissionContentWidth = 280;
+static const CGFloat permissionRowHeight = 42;
 
 static NSView *permissionRow(NSString *label, NSButton *button) {
-    const CGFloat buttonWidth = 140;
+    const CGFloat buttonWidth = 144;
+    const CGFloat buttonHeight = 38;
     NSView *row = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, permissionContentWidth, permissionRowHeight)] autorelease];
     NSTextField *name = [NSTextField wrappingLabelWithString:label];
     name.frame = NSMakeRect(0, 0, permissionContentWidth - buttonWidth - 12, permissionRowHeight);
-    button.frame = NSMakeRect(permissionContentWidth - buttonWidth, (permissionRowHeight - 28) / 2, buttonWidth, 28);
+    button.cell.wraps = YES;
+    button.frame = NSMakeRect(permissionContentWidth - buttonWidth, (permissionRowHeight - buttonHeight) / 2,
+                              buttonWidth, buttonHeight);
     [row addSubview:name];
     [row addSubview:button];
     return row;
@@ -180,11 +183,11 @@ static void showPermissionSetup(void) {
     actions.accessibilityButton = accessibility;
     [actions showMissingPermissions:missing];
 
-    NSView *micRow = permissionRow(@"マイク\nMicrophone", microphone);
-    NSView *pasteRow = permissionRow(@"アクセシビリティ\nAccessibility", accessibility);
+    NSView *micRow = permissionRow(@"Microphone\nマイク", microphone);
+    NSView *pasteRow = permissionRow(@"Accessibility\nアクセシビリティ", accessibility);
     NSTextField *updateHelp = [NSTextField wrappingLabelWithString:
-        @"オンなのに未許可の場合は、旧署名の登録を削除し、今の Voice Typing.app を追加してください。"
-         "\nIf already on, remove the entry for the old signature and add the current Voice Typing.app."];
+        @"If already on, remove the entry for the old signature and add the current Voice Typing.app."
+         "\nオンなのに未許可の場合は、旧署名の登録を削除し、今の Voice Typing.app を追加してください。"];
     updateHelp.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
     updateHelp.textColor = NSColor.secondaryLabelColor;
     NSView *controls = [[[NSView alloc] initWithFrame:NSZeroRect] autorelease];
@@ -194,12 +197,12 @@ static void showPermissionSetup(void) {
     layoutPermissionControls(controls, micRow, pasteRow, updateHelp, missing);
 
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = @"権限設定 / Permissions";
-    alert.informativeText = @"両方を許可すると自動で再起動します。"
-                             "\nAllow both permissions to restart automatically.";
+    alert.messageText = @"Permissions\n権限設定";
+    alert.informativeText = @"Allow both permissions to restart automatically."
+                             "\n両方を許可すると自動で再起動します。";
     alert.accessoryView = controls;
-    [alert addButtonWithTitle:@"再起動 / Restart"];
-    [alert addButtonWithTitle:@"あとで / Later"];
+    [alert addButtonWithTitle:@"Restart / 再起動"];
+    [alert addButtonWithTitle:@"Later / あとで"];
     __block NSTask *probe = nil;
     NSTimer *timer = [NSTimer timerWithTimeInterval:1.5 repeats:YES block:^(NSTimer *check) {
         if (probe.running) {
@@ -228,8 +231,8 @@ static void showPermissionSetup(void) {
             return;
         }
         [check invalidate];
-        alert.informativeText = @"マイクとアクセシビリティの許可を確認しました。再起動しています…"
-                                 "\nMicrophone and Accessibility are allowed. Restarting Voice Typing…";
+        alert.informativeText = @"Microphone and Accessibility are allowed. Restarting Voice Typing…"
+                                 "\nマイクとアクセシビリティの許可を確認しました。再起動しています…";
         for (NSButton *button in alert.buttons) {
             button.enabled = NO;
         }
@@ -260,9 +263,9 @@ static void showPermissionSetup(void) {
                 return;
             }
             NSAlert *failure = [[NSAlert alloc] init];
-            failure.messageText = @"再起動できませんでした / Could not restart";
-            failure.informativeText = @"Voice Typing を終了して開き直してください。"
-                                       "\nQuit and reopen Voice Typing to apply the permissions.";
+            failure.messageText = @"Could not restart\n再起動できませんでした";
+            failure.informativeText = @"Quit and reopen Voice Typing to apply the permissions."
+                                       "\nVoice Typing を終了して開き直してください。";
             [failure runModal];
             [failure release];
         });
