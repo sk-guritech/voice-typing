@@ -1,8 +1,103 @@
 #import <Cocoa/Cocoa.h>
 #import <Carbon/Carbon.h>
+#import <AVFoundation/AVFoundation.h>
+#import <ApplicationServices/ApplicationServices.h>
+#import <WebKit/WebKit.h>
+#import <objc/runtime.h>
 #include <stdint.h>
 
 extern void voiceMacShortcutPressed(uintptr_t callback);
+
+@interface VoiceTypingMediaDelegate : NSObject <WKUIDelegate>
+@property(nonatomic, assign) id<WKUIDelegate> original;
+@end
+
+@implementation VoiceTypingMediaDelegate
+
+- (BOOL)respondsToSelector:(SEL)selector {
+    return [super respondsToSelector:selector] || [self.original respondsToSelector:selector];
+}
+
+- (id)forwardingTargetForSelector:(SEL)selector {
+    return [self.original respondsToSelector:selector] ? self.original : [super forwardingTargetForSelector:selector];
+}
+
+- (void)webView:(WKWebView *)webView
+    requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin
+    initiatedByFrame:(WKFrameInfo *)frame
+    type:(WKMediaCaptureType)type
+    decisionHandler:(void (^)(WKPermissionDecision))decisionHandler {
+    if (!frame.isMainFrame || type != WKMediaCaptureTypeMicrophone ||
+        ![origin.protocol isEqualToString:@"wails"] || ![origin.host isEqualToString:@"wails"] ||
+        origin.port != 0) {
+        decisionHandler(WKPermissionDecisionDeny);
+        return;
+    }
+    AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+    if (status != AVAuthorizationStatusNotDetermined) {
+        decisionHandler(status == AVAuthorizationStatusAuthorized ? WKPermissionDecisionGrant : WKPermissionDecisionDeny);
+        return;
+    }
+    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            decisionHandler(granted ? WKPermissionDecisionGrant : WKPermissionDecisionDeny);
+        });
+    }];
+}
+
+@end
+
+static void installMediaDelegate(NSWindow *window) {
+    static char delegateKey;
+    for (NSView *view in window.contentView.subviews) {
+        if ([view isKindOfClass:WKWebView.class]) {
+            WKWebView *webView = (WKWebView *)view;
+            VoiceTypingMediaDelegate *delegate = [[VoiceTypingMediaDelegate alloc] init];
+            delegate.original = webView.UIDelegate;
+            objc_setAssociatedObject(webView, &delegateKey, delegate, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            webView.UIDelegate = delegate;
+            [delegate release];
+            return;
+        }
+    }
+}
+
+static void requestPastePermission(void) {
+    if (!CGPreflightPostEventAccess()) {
+        CGRequestPostEventAccess();
+    }
+}
+
+static void showPermissionSetup(bool english) {
+    NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
+    NSString *setupShown = @"VoiceTypingPermissionSetupShown";
+    AVAuthorizationStatus microphone = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+    if ([defaults boolForKey:setupShown] ||
+        (microphone == AVAuthorizationStatusAuthorized && CGPreflightPostEventAccess())) {
+        return;
+    }
+    [defaults setBool:YES forKey:setupShown];
+
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = english ? @"Set up Voice Typing" : @"Voice Typing の初回設定";
+    alert.informativeText = english
+        ? @"Allow Microphone for dictation and Accessibility for automatic pasting. After allowing both, quit and reopen Voice Typing."
+        : @"音声入力には「マイク」、自動貼り付けには「アクセシビリティ」を許可してください。両方を許可したら、Voice Typing を終了して開き直してください。";
+    [alert addButtonWithTitle:english ? @"Set up permissions" : @"権限を設定"];
+    [alert addButtonWithTitle:english ? @"Later" : @"あとで"];
+    NSModalResponse response = [alert runModal];
+    [alert release];
+    if (response != NSAlertFirstButtonReturn) {
+        return;
+    }
+    if (microphone == AVAuthorizationStatusNotDetermined) {
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {
+            dispatch_async(dispatch_get_main_queue(), ^{ requestPastePermission(); });
+        }];
+    } else {
+        requestPastePermission();
+    }
+}
 
 static void onMainThread(dispatch_block_t block) {
     if ([NSThread isMainThread]) {
@@ -12,7 +107,7 @@ static void onMainThread(dispatch_block_t block) {
     }
 }
 
-bool voicePlaceMacPanel(int width, int height, bool startup) {
+bool voicePlaceMacPanel(int width, int height, bool startup, bool setupPermissions, bool english) {
     __block bool placed = false;
     onMainThread(^{
         for (NSWindow *window in NSApp.windows) {
@@ -29,6 +124,10 @@ bool voicePlaceMacPanel(int width, int height, bool startup) {
                 window.opaque = NO;
                 window.backgroundColor = NSColor.clearColor;
                 window.hasShadow = NO;
+                installMediaDelegate(window);
+                if (setupPermissions) {
+                    dispatch_async(dispatch_get_main_queue(), ^{ showPermissionSetup(english); });
+                }
             }
             NSRect visible = screen.visibleFrame;
             NSRect previous = window.frame;

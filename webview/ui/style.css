@@ -108,11 +108,13 @@ body { margin: 0; }
 }
 .panel-actions button:focus-visible { outline-offset: -2px; }
 .inline-settings {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 0;
   width: 100%;
   box-sizing: border-box;
-  overflow: auto;
+  overflow: hidden;
   padding: 12px 16px;
   border: 1px solid var(--panel-border);
   border-radius: 18px;
@@ -120,12 +122,13 @@ body { margin: 0; }
   color: var(--panel-text);
   box-shadow: 0 3px 7px rgb(16 25 38 / 24%);
 }
-.settings-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.settings-header { display: flex; flex: none; align-items: center; justify-content: space-between; margin-bottom: 5px; }
 h1 { font-size: 17px; margin: 0; }
 .keep-above { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 13px; }
 .keep-above input { width: 16px; height: 16px; min-height: 0; margin: 0; accent-color: var(--panel-focus); }
 .keep-above input:disabled + span { color: var(--panel-icon); }
-form { display: grid; gap: 6px; }
+form { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+.settings-fields { display: grid; gap: 6px; min-height: 0; overflow: auto; padding: 4px; margin: -4px; }
 .settings-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr) minmax(0, 1fr); gap: 8px; }
 .settings-field { display: grid; gap: 6px; }
 .settings-field select { min-width: 0; }
@@ -138,7 +141,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 .row { display: flex; gap: 8px; }
 .row > :first-child { flex: 1; min-width: 0; }
 output { display: flex; align-items: center; }
-.footer { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-top: 12px; }
-.footer p { color: var(--panel-icon); margin: 5px 0; }
-.footer button { background: var(--panel-focus); color: var(--panel-bg); min-width: 64px; border-color: transparent; font-weight: 700; }
+.footer { display: flex; flex: none; align-items: flex-start; justify-content: space-between; gap: 12px; margin-top: 12px; }
+.footer p { color: var(--panel-icon); min-width: 0; overflow-wrap: anywhere; margin: 5px 0; }
+.footer button { flex: none; white-space: nowrap; background: var(--panel-focus); color: var(--panel-bg); min-width: 64px; border-color: transparent; font-weight: 700; }
 button:disabled { opacity: 0.6; cursor: wait; }

@@ -15,32 +15,34 @@
       </label>
     </header>
     <form id="settings">
-      <div class="settings-pair">
-        <div class="settings-field">
-          <label for="provider" data-l10n="provider">認識サービス</label>
-          <select id="provider"><option value="soniox">Soniox</option><option value="openai">OpenAI</option></select>
+      <div class="settings-fields">
+        <div class="settings-pair">
+          <div class="settings-field">
+            <label for="provider" data-l10n="provider">認識サービス</label>
+            <select id="provider"><option value="soniox">Soniox</option><option value="openai">OpenAI</option></select>
+          </div>
+          <div class="settings-field">
+            <label for="model" data-l10n="model">モデル</label>
+            <select id="model"></select>
+          </div>
+          <div class="settings-field">
+            <label for="language" data-l10n="language">表示言語</label>
+            <select id="language">
+              <option value="ja" lang="ja">日本語</option>
+              <option value="en" lang="en">English</option>
+            </select>
+          </div>
         </div>
-        <div class="settings-field">
-          <label for="model" data-l10n="model">モデル</label>
-          <select id="model"></select>
+        <label for="key" data-l10n="keyLabel">API キー</label>
+        <div class="row">
+          <input id="key" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="API キーを入力">
+          <button id="reveal" type="button">表示</button>
         </div>
-        <div class="settings-field">
-          <label for="language" data-l10n="language">表示言語</label>
-          <select id="language">
-            <option value="ja" lang="ja">日本語</option>
-            <option value="en" lang="en">English</option>
-          </select>
+        <label for="shortcut" data-l10n="shortcut">ショートカット</label>
+        <div class="row">
+          <output id="shortcut" for="capture"></output>
+          <button id="capture" type="button">変更</button>
         </div>
-      </div>
-      <label for="key" data-l10n="keyLabel">API キー</label>
-      <div class="row">
-        <input id="key" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="API キーを入力">
-        <button id="reveal" type="button">表示</button>
-      </div>
-      <label for="shortcut" data-l10n="shortcut">ショートカット</label>
-      <div class="row">
-        <output id="shortcut" for="capture"></output>
-        <button id="capture" type="button">変更</button>
       </div>
       <div class="footer">
         <p id="message" role="status"></p>
