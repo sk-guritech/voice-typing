@@ -66,10 +66,6 @@ Intel Mac の実機で、マイクでの音声入力と自動入力を確認し�
 
 どのモデルでも、文字の入力は録音終了後です。
 
-## 問題を報告する
-
-使っている OS、アプリのバージョン、問題が起きたときの操作と結果を書いてください。画像やログを添える前に、API キーや個人情報を消してください。[GitHub で問題を報告する](https://github.com/sk-guritech/voice-typing/issues/new)
-
 <details>
 <summary>開発者向けの軽量版ビルド手順</summary>
 

@@ -66,10 +66,6 @@ Prices are in US dollars per hour of audio, checked in November 2026. Rates for 
 
 Voice Typing outputs text after recording ends for every model.
 
-## Report a problem
-
-Include your OS, Voice Typing version, what you did, and what happened. Remove API keys and personal information from screenshots and logs before sharing. [Open a GitHub issue](https://github.com/sk-guritech/voice-typing/issues/new)
-
 <details>
 <summary>Build the lightweight app from source</summary>
 
