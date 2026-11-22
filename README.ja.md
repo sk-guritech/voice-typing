@@ -39,7 +39,7 @@
 
    <img src="docs/recording.png" width="170" alt="音声入力中の青い波形">
 
-3. **文字を入力する。** <kbd>Page Down</kbd> をもう一度押すと、話した内容が文字になります。
+3. **文字を入力する。** <kbd>Page Down</kbd> をもう一度押すと、話した内容が入力されます（Linux と macOS ではクリップボードにコピーされます）。
 
 ## 問題を報告する
 
