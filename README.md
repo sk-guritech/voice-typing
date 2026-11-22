@@ -23,11 +23,11 @@ Create a key for the speech recognition service you want to use.
 
 Download the file for your computer, open it, and set up an API key in the gear menu. [Download the latest release](https://github.com/sk-guritech/voice-typing/releases/latest)
 
-| OS | File to choose | Launch | Tested on a desktop |
+| OS | Requirements | Launch | Tested on a desktop |
 | --- | --- | --- | --- |
-| Windows x64 | `.exe` | Double-click the file. | ○ Verified |
-| Linux x64 | AppImage / `.tar.gz` | Make the AppImage executable and open it, or extract the archive and run `voice-typing`. | × Unverified |
-| macOS | Apple silicon (arm64) or Intel (x64) ZIP | Extract the ZIP and open `Voice Typing.app`. | × Unverified on a physical Mac |
+| Windows x64 | WebView2 Runtime | Double-click the `.exe`. | ○ Verified |
+| Linux x64 | GTK 3 and WebKitGTK 4.1 | Extract the `.tar.gz` and run `voice-typing`. | × Unverified (Ubuntu container tested) |
+| macOS | macOS 13 or later | Extract the Apple silicon (arm64) or Intel (x64) ZIP and open `Voice Typing.app`. | × Unverified on a physical Mac |
 
 ## Quick start
 

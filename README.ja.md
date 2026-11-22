@@ -23,11 +23,11 @@
 
 お使いの OS に合ったファイルを選び、下の表に沿って起動します。[最新版をダウンロード](https://github.com/sk-guritech/voice-typing/releases/latest)
 
-| OS | 選ぶファイル | 起動方法 | 実環境での動作確認 |
+| OS | 必要な環境 | 起動方法 | 実環境での動作確認 |
 | --- | --- | --- | --- |
-| Windows x64 | `.exe` | ファイルをダブルクリックします。 | ○ 確認済み |
-| Linux x64 | AppImage / `.tar.gz` | AppImage は実行を許可してから開きます。`.tar.gz` は展開して `voice-typing` を起動します。 | × 未確認 |
-| macOS | Apple Silicon（arm64）用または Intel（x64）用の ZIP | ZIP を展開して `Voice Typing.app` を開きます。 | × Mac 実機で未確認 |
+| Windows x64 | WebView2 Runtime | `.exe` をダブルクリックします。 | ○ 確認済み |
+| Linux x64 | GTK 3、WebKitGTK 4.1 | `.tar.gz` を展開し、`voice-typing` を起動します。 | × 未確認（Ubuntu コンテナで確認済み） |
+| macOS | macOS 13 以降 | Apple Silicon（arm64）用または Intel（x64）用の ZIP を展開し、`Voice Typing.app` を開きます。 | × Mac 実機で未確認 |
 
 ## 使い方
 
