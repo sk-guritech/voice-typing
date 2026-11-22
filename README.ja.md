@@ -12,7 +12,7 @@
 
 ## 準備
 
-使いたい認識サービスの API キーを取得します。
+使う音声認識サービスの API キーを用意します。
 
 | サービス | 取得先 | 取得手順 |
 | --- | --- | --- |
@@ -21,7 +21,7 @@
 
 ## ダウンロードと起動
 
-お使いの OS に合ったファイルをダウンロードして起動し、歯車から API キーを設定します。[最新版をダウンロード](https://github.com/sk-guritech/voice-typing/releases/latest)
+お使いの OS に合ったファイルを選び、下の表に沿って起動します。[最新版をダウンロード](https://github.com/sk-guritech/voice-typing/releases/latest)
 
 | OS | 選ぶファイル | 起動方法 | 実環境での動作確認 |
 | --- | --- | --- | --- |
@@ -31,27 +31,27 @@
 
 ## 使い方
 
-1. **設定する。** 歯車を開き、Soniox または OpenAI の API キーを入力して**保存**します。ショートカットと前面表示もここで変更できます。
+1. **設定する。** 歯車を押してサービスを選び、API キーを入力して **保存** します。ショートカットや「常に手前に表示」の設定もここで変更できます。
 
    <img src="docs/settings.png" width="280" alt="Voice Typing の設定画面">
 
-2. **話す。** Windows は入力欄にカーソルを置き、Linux・macOS はパネルにフォーカスを置きます。<kbd>Page Down</kbd> を押し、青い波形が動いたら話します。
+2. **話す。** Windows では入力したい欄にカーソルを置き、Linux と macOS では音声入力パネルをクリックします。<kbd>Page Down</kbd> を押し、青い波形が動いたら話します。
 
    <img src="docs/recording.png" width="170" alt="音声入力中の青い波形">
 
 3. **文字を入力する。** <kbd>Page Down</kbd> をもう一度押して確定し、必要に応じて貼り付けます。
 
-## イシューの立て方
+## 問題を報告する
 
-OS、アプリのバージョン、問題が起きた手順と結果を書いてください。画像やログを添える場合は、API キーや個人情報を消してください。[GitHub でイシューを作る](https://github.com/sk-guritech/voice-typing/issues/new)
+使っている OS、アプリのバージョン、問題が起きたときの操作と結果を書いてください。画像やログを添える前に、API キーや個人情報を消してください。[GitHub で問題を報告する](https://github.com/sk-guritech/voice-typing/issues/new)
 
 <details>
 <summary>開発者向けの軽量版ビルド手順</summary>
 
-Go 1.27.4 で `webview/` から実行します。
+Go 1.27.4 を使います。以下のコマンドは `webview/` で実行します。
 
 - **Windows（WebView2 Runtime）** — `go build -tags production -trimpath -ldflags "-s -w -H windowsgui" -o ../release/Voice-Typing-windows-x64.exe .`
 - **Linux（GTK 3、WebKitGTK 4.1。Ubuntu コンテナで確認済み）** — Bash で `docker build -t voice-typing:linux .` の後、`docker run --rm voice-typing:linux tar -cz -C /usr/local/bin voice-typing > ../release/Voice-Typing-linux-x64.tar.gz` を実行します。
-- **macOS（macOS 13 以降）** — Apple のコマンドラインツールが入った Mac で `bash build-macos.sh`。
+- **macOS（macOS 13 以降）** — Apple のコマンドラインツールが入った Mac で `bash build-macos.sh` を実行します。
 
 </details>
