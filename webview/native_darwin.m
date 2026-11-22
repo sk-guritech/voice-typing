@@ -69,10 +69,10 @@ static void requestPastePermission(void) {
     }
 }
 
-static void relaunchForPermissions(void) {
+static bool relaunchForPermissions(void) {
     static bool relaunching;
     if (relaunching) {
-        return;
+        return true;
     }
     NSTask *task = [[NSTask alloc] init];
     task.executableURL = [NSURL fileURLWithPath:@"/bin/sh"];
@@ -84,8 +84,10 @@ static void relaunchForPermissions(void) {
     relaunching = [task launchAndReturnError:NULL];
     [task release];
     if (relaunching) {
+        NSLog(@"Voice Typing is restarting after permission setup.");
         [NSApp terminate:nil];
     }
+    return relaunching;
 }
 
 @interface VoiceTypingPermissionActions : NSObject
@@ -150,18 +152,6 @@ static void showPermissionSetup(bool english) {
     size.width = MAX(size.width, 240);
     [controls setFrameSize:size];
 
-    NSDate *deadline = [NSDate dateWithTimeIntervalSinceNow:180];
-    NSTimer *timer = [NSTimer timerWithTimeInterval:0.7 repeats:YES block:^(NSTimer *check) {
-        if ([actions refresh]) {
-            [check invalidate];
-            relaunchForPermissions();
-        } else if ([deadline timeIntervalSinceNow] <= 0) {
-            [check invalidate];
-        }
-    }];
-    [NSRunLoop.mainRunLoop addTimer:timer forMode:NSRunLoopCommonModes];
-    [NSRunLoop.mainRunLoop addTimer:timer forMode:NSModalPanelRunLoopMode];
-
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = english ? @"Voice Typing permissions" : @"Voice Typing の権限設定";
     alert.informativeText = english
@@ -170,6 +160,34 @@ static void showPermissionSetup(bool english) {
     alert.accessoryView = controls;
     [alert addButtonWithTitle:english ? @"Restart and check" : @"再起動して確認"];
     [alert addButtonWithTitle:english ? @"Later" : @"あとで"];
+    NSTimer *timer = [NSTimer timerWithTimeInterval:1.0 repeats:YES block:^(NSTimer *check) {
+        if (![actions refresh]) {
+            return;
+        }
+        [check invalidate];
+        alert.informativeText = english
+            ? @"Microphone and Accessibility are allowed. Restarting Voice Typing…"
+            : @"マイクとアクセシビリティの許可を確認しました。Voice Typing を再起動しています…";
+        for (NSButton *button in alert.buttons) {
+            button.enabled = NO;
+        }
+        [alert layout];
+        [alert.window orderFrontRegardless];
+        NSTimer *restart = [NSTimer timerWithTimeInterval:1.0 repeats:NO block:^(NSTimer *pending) {
+            if (NSApp.modalWindow == alert.window && !relaunchForPermissions()) {
+                alert.informativeText = english
+                    ? @"Voice Typing could not restart. Quit and reopen it to apply the permissions."
+                    : @"自動で再起動できませんでした。Voice Typing を終了して開き直してください。";
+                for (NSButton *button in alert.buttons) {
+                    button.enabled = YES;
+                }
+                [alert layout];
+            }
+        }];
+        [NSRunLoop.mainRunLoop addTimer:restart forMode:NSModalPanelRunLoopMode];
+    }];
+    [NSRunLoop.mainRunLoop addTimer:timer forMode:NSRunLoopCommonModes];
+    [NSRunLoop.mainRunLoop addTimer:timer forMode:NSModalPanelRunLoopMode];
     NSModalResponse response = [alert runModal];
     [timer invalidate];
     [alert release];
