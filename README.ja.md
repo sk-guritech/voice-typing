@@ -24,14 +24,14 @@
 
 お使いの OS に合ったファイルを選び、下の表に沿って起動します。[最新版をダウンロード](https://github.com/sk-guritech/voice-typing/releases/latest)
 
-| OS | 必要な環境 | 起動方法 | 実環境での動作確認 |
+| OS | 必要な環境 | 起動方法 | 動作確認 |
 | --- | --- | --- | --- |
 | Windows x64 | WebView2 Runtime | `.exe` をダブルクリックします。 | ○ 確認済み |
-| Linux x64 | GTK 3、WebKitGTK 4.1 | `.tar.gz` を展開し、`voice-typing` を起動します。 | × 未確認（Ubuntu コンテナで確認済み） |
+| Linux x64 | GTK 3、WebKitGTK 4.1 | `.tar.gz` を展開し、`voice-typing` を起動します。 | △ Ubuntu コンテナで仮想マイクと貼り付けを確認 |
 | macOS（Intel） | macOS 13 以降 | x64 用の ZIP を展開し、`Voice Typing.app` を開きます。 | ○ macOS 15.7.9 で確認済み |
 | macOS（Apple Silicon） | macOS 13 以降 | arm64 用の ZIP を展開し、`Voice Typing.app` を開きます。 | × 実機未確認（CI で起動確認済み） |
 
-Intel Mac の実機で、リリース版 ZIP の起動と合成音テストを確認済みです。マイクでの音声入力と自動貼り付けは、`main` の新しいビルドで確認しました。
+Intel Mac の実機で、マイクでの音声入力と自動貼り付けを確認しました。Linux の検証には仮想マイクとテスト用の認識応答を使いました。
 
 ## 使い方
 
@@ -39,15 +39,15 @@ Intel Mac の実機で、リリース版 ZIP の起動と合成音テストを�
 
    <img src="docs/settings.png" width="280" alt="Voice Typing の設定画面">
 
-2. **話す。** Windows では入力したい欄にカーソルを置き、Linux と macOS では音声入力パネルをクリックします。<kbd>Page Down</kbd> を押し、青い波形が動いたら話します。
+2. **話す。** Windows と macOS では入力欄にカーソルを置き、Linux では音声入力パネルをクリックします。<kbd>Page Down</kbd> を押し、青い波形が動いたら話します。
 
    <img src="docs/recording.png" width="170" alt="音声入力中の青い波形">
 
-3. **文字を入力する。** <kbd>Page Down</kbd> をもう一度押すと、話した内容が入力されます（Linux と macOS ではクリップボードにコピーされます）。
+3. **文字を入力する。** <kbd>Page Down</kbd> をもう一度押して確定します。Linux ではクリップボードから貼り付けます。
 
 ### macOSの権限
 
-**システム設定 → プライバシーとセキュリティ** で、音声入力に必要な **マイク** を許可します。自動貼り付けに対応したmacOS版では、**アクセシビリティ** も許可します。両方を設定してから Voice Typing を開き直せます。
+**システム設定 → プライバシーとセキュリティ** で、音声入力に必要な **マイク** と、自動貼り付けに必要な **アクセシビリティ** を許可します。両方を設定してから Voice Typing を開き直せます。
 
 簡易署名のビルドを更新した後、**アクセシビリティ** がオンでも許可を求められる場合は、旧ビルドの署名に対する許可が残っている可能性があります。古い Voice Typing の項目を削除し、現在の `Voice Typing.app` を追加して開き直します。[Appleのアクセシビリティ設定ガイド](https://support.apple.com/ja-jp/guide/mac-help/mh43185/mac)
 

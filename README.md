@@ -24,14 +24,14 @@ Create a key for the speech recognition service you want to use.
 
 Download the file for your computer, open it, and set up an API key in the gear menu. [Download the latest release](https://github.com/sk-guritech/voice-typing/releases/latest)
 
-| OS | Requirements | Launch | Tested on a desktop |
+| OS | Requirements | Launch | Verification |
 | --- | --- | --- | --- |
 | Windows x64 | WebView2 Runtime | Double-click the `.exe`. | ○ Verified |
-| Linux x64 | GTK 3 and WebKitGTK 4.1 | Extract the `.tar.gz` and run `voice-typing`. | × Unverified (Ubuntu container tested) |
+| Linux x64 | GTK 3 and WebKitGTK 4.1 | Extract the `.tar.gz` and run `voice-typing`. | △ Virtual microphone and clipboard tested in an Ubuntu container |
 | macOS (Intel) | macOS 13 or later | Extract the x64 ZIP and open `Voice Typing.app`. | ○ Verified on macOS 15.7.9 |
 | macOS (Apple silicon) | macOS 13 or later | Extract the arm64 ZIP and open `Voice Typing.app`. | × No physical Mac tested (launch verified in CI) |
 
-On an Intel Mac, the release ZIP passed the launch and synthetic-audio tests. Dictation with a real microphone and automatic pasting were verified with a newer build from `main`.
+Dictation with a physical microphone and automatic pasting were tested on an Intel Mac. The Linux test used a virtual microphone and a simulated transcription response.
 
 ## Quick start
 
@@ -39,15 +39,15 @@ On an Intel Mac, the release ZIP passed the launch and synthetic-audio tests. Di
 
    <img src="docs/settings-en.png" width="280" alt="Voice Typing Settings in English">
 
-2. **Speak.** On Windows, put the cursor where you want the text. On Linux and macOS, focus the panel. Press <kbd>Page Down</kbd> and speak when the blue waveform moves.
+2. **Speak.** On Windows and macOS, put the cursor where you want the text. On Linux, focus the panel. Press <kbd>Page Down</kbd> and speak when the blue waveform moves.
 
    <img src="docs/recording.png" width="170" alt="Blue waveform while dictating">
 
-3. **Enter the text.** Press <kbd>Page Down</kbd> again to enter what you said (Linux and macOS copy it to the clipboard).
+3. **Enter the text.** Press <kbd>Page Down</kbd> again to finish. On Linux, paste the result from the clipboard.
 
 ### macOS permissions
 
-In **System Settings → Privacy & Security**, allow **Microphone** for dictation. For macOS builds with automatic pasting, also allow **Accessibility**. You can set up both permissions before reopening Voice Typing.
+In **System Settings → Privacy & Security**, allow **Microphone** for dictation and **Accessibility** for automatic pasting. You can set both permissions before reopening Voice Typing.
 
 If **Accessibility** is on but Voice Typing still asks for permission after an ad hoc-signed update, macOS may have kept the previous build's permission. Remove the old Voice Typing entry, add the current `Voice Typing.app`, and reopen it. [Apple's Accessibility guide](https://support.apple.com/guide/mac-help/allow-accessibility-apps-to-access-your-mac-mh43185/mac)
 
