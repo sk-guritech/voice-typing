@@ -102,7 +102,6 @@ static bool relaunchForPermissions(void) {
 @interface VoiceTypingPermissionActions : NSObject
 @property(nonatomic, assign) NSButton *microphoneButton;
 @property(nonatomic, assign) NSButton *accessibilityButton;
-@property(nonatomic) bool english;
 - (void)requestMicrophone:(id)sender;
 - (void)requestAccessibility:(id)sender;
 - (void)showMissingPermissions:(int)missing;
@@ -129,24 +128,32 @@ static bool relaunchForPermissions(void) {
     bool accessibility = !(missing & accessibilityMissing);
     [self.microphoneButton setEnabled:!microphone];
     [self.accessibilityButton setEnabled:!accessibility];
-    self.microphoneButton.title = self.english
-        ? (microphone ? @"Microphone allowed" : @"Set up Microphone")
-        : (microphone ? @"マイクは許可済み" : @"マイクを設定");
-    self.accessibilityButton.title = self.english
-        ? (accessibility ? @"Accessibility allowed" : @"Set up Accessibility")
-        : (accessibility ? @"アクセシビリティは許可済み" : @"アクセシビリティを設定");
+    self.microphoneButton.title = microphone
+        ? @"マイク：許可済み / Microphone allowed" : @"マイクを設定 / Set up Microphone";
+    self.accessibilityButton.title = accessibility
+        ? @"アクセシビリティ：許可済み / Accessibility allowed" : @"アクセシビリティを設定 / Set up Accessibility";
 }
 
 @end
 
-static void showPermissionSetup(bool english) {
+static NSString *permissionInstructions(int missing) {
+    NSString *instructions = @"音声入力にはマイク、自動貼り付けにはアクセシビリティを許可してください。両方の許可を確認すると自動で再起動します。"
+                              "\nAllow Microphone for dictation and Accessibility for automatic pasting. Voice Typing restarts once both permissions are granted.";
+    if (missing & accessibilityMissing) {
+        return [instructions stringByAppendingString:
+            @"\n\n設定でアクセシビリティが「オン」なのに、この画面で設定を求められる場合は、旧ビルドの署名に許可が残っている可能性があります。古い登録を削除し、現在の Voice Typing.app を追加してください。"
+             "\nIf Accessibility is already on but this build still needs permission, the previous entry may be for an older signature. Remove that entry and add the current Voice Typing.app."];
+    }
+    return instructions;
+}
+
+static void showPermissionSetup(void) {
     __block int missing = voiceMacMissingPermissions();
     if (missing == 0) {
         return;
     }
 
     VoiceTypingPermissionActions *actions = [[VoiceTypingPermissionActions alloc] init];
-    actions.english = english;
     NSButton *microphone = [NSButton buttonWithTitle:@"" target:actions action:@selector(requestMicrophone:)];
     NSButton *accessibility = [NSButton buttonWithTitle:@"" target:actions action:@selector(requestAccessibility:)];
     actions.microphoneButton = microphone;
@@ -157,26 +164,27 @@ static void showPermissionSetup(bool english) {
     controls.alignment = NSLayoutAttributeLeading;
     controls.spacing = 8;
     NSSize size = controls.fittingSize;
-    size.width = MAX(size.width, 240);
+    size.width = MAX(size.width, 330);
     [controls setFrameSize:size];
 
     NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = english ? @"Voice Typing permissions" : @"Voice Typing の権限設定";
-    alert.informativeText = english
-        ? @"Allow Microphone for dictation and Accessibility for automatic pasting. Voice Typing restarts when both are allowed. If it stays open after you allow both, click Restart and check."
-        : @"音声入力にはマイク、自動貼り付けにはアクセシビリティを許可してください。両方の許可を確認すると自動で再起動します。両方を許可しても画面が変わらなければ「再起動して確認」を押してください。";
+    alert.messageText = @"権限設定 / Voice Typing permissions";
+    alert.informativeText = permissionInstructions(missing);
     alert.accessoryView = controls;
-    [alert addButtonWithTitle:english ? @"Restart and check" : @"再起動して確認"];
-    [alert addButtonWithTitle:english ? @"Later" : @"あとで"];
+    [alert addButtonWithTitle:@"再起動して確認 / Restart and check"];
+    [alert addButtonWithTitle:@"あとで / Later"];
     __block NSTask *probe = nil;
     NSTimer *timer = [NSTimer timerWithTimeInterval:1.5 repeats:YES block:^(NSTimer *check) {
         if (probe.running) {
             return;
         }
         if (probe != nil) {
-            if (probe.terminationReason == NSTaskTerminationReasonExit && probe.terminationStatus <= permissionMask) {
+            if (probe.terminationReason == NSTaskTerminationReasonExit && probe.terminationStatus <= permissionMask &&
+                probe.terminationStatus != missing) {
                 missing = probe.terminationStatus;
                 [actions showMissingPermissions:missing];
+                alert.informativeText = permissionInstructions(missing);
+                [alert layout];
             }
             [probe release];
             probe = nil;
@@ -193,9 +201,8 @@ static void showPermissionSetup(bool english) {
             return;
         }
         [check invalidate];
-        alert.informativeText = english
-            ? @"Microphone and Accessibility are allowed. Restarting Voice Typing…"
-            : @"マイクとアクセシビリティの許可を確認しました。Voice Typing を再起動しています…";
+        alert.informativeText = @"マイクとアクセシビリティの許可を確認しました。再起動しています…"
+                                 "\nMicrophone and Accessibility are allowed. Restarting Voice Typing…";
         for (NSButton *button in alert.buttons) {
             button.enabled = NO;
         }
@@ -226,10 +233,9 @@ static void showPermissionSetup(bool english) {
                 return;
             }
             NSAlert *failure = [[NSAlert alloc] init];
-            failure.messageText = english ? @"Voice Typing could not restart" : @"Voice Typing を再起動できませんでした";
-            failure.informativeText = english
-                ? @"Quit and reopen Voice Typing to apply the permissions."
-                : @"Voice Typing を終了して開き直してください。";
+            failure.messageText = @"再起動できませんでした / Could not restart";
+            failure.informativeText = @"Voice Typing を終了して開き直してください。"
+                                       "\nQuit and reopen Voice Typing to apply the permissions.";
             [failure runModal];
             [failure release];
         });
@@ -321,7 +327,7 @@ static void onMainThread(dispatch_block_t block) {
 @end
 
 bool voicePlaceMacPanel(int width, int height, int windowWidth, int windowHeight,
-                        bool startup, bool setupPermissions, bool english) {
+                        bool startup, bool setupPermissions) {
     __block bool placed = false;
     onMainThread(^{
         static char mouseRegionKey;
@@ -341,7 +347,7 @@ bool voicePlaceMacPanel(int width, int height, int windowWidth, int windowHeight
                 window.hasShadow = NO;
                 installMediaDelegate(window);
                 if (setupPermissions) {
-                    dispatch_async(dispatch_get_main_queue(), ^{ showPermissionSetup(english); });
+                    dispatch_async(dispatch_get_main_queue(), ^{ showPermissionSetup(); });
                 }
                 VoiceTypingMouseRegion *region = [[VoiceTypingMouseRegion alloc] initWithWindow:window];
                 if (region == nil) {

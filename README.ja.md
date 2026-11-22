@@ -46,7 +46,7 @@
 
 **システム設定 → プライバシーとセキュリティ** で、音声入力に必要な **マイク** を許可します。自動貼り付けに対応したmacOS版では、**アクセシビリティ** も許可します。両方を設定してから Voice Typing を開き直せます。
 
-簡易署名のビルドを差し替えて自動貼り付けが動かなくなったら、**アクセシビリティ** から古い Voice Typing の項目を削除し、現在の `Voice Typing.app` を追加して開き直します。[Appleのアクセシビリティ設定ガイド](https://support.apple.com/ja-jp/guide/mac-help/mh43185/mac)
+簡易署名のビルドを更新した後、**アクセシビリティ** がオンでも許可を求められる場合は、旧ビルドの署名に対する許可が残っている可能性があります。古い Voice Typing の項目を削除し、現在の `Voice Typing.app` を追加して開き直します。[Appleのアクセシビリティ設定ガイド](https://support.apple.com/ja-jp/guide/mac-help/mh43185/mac)
 
 ## モデルと料金
 
