@@ -34,13 +34,11 @@
 
    <img src="docs/settings.png" width="280" alt="Voice Typing の設定画面">
 
-   画像は `main` の軽量版です。軽量版では **表示言語** を選ぶとすぐに切り替わります。
-
 2. **話す。** Windows は入力欄にカーソルを置き、Linux・macOS はパネルにフォーカスを置きます。<kbd>Page Down</kbd> を押し、青い波形が動いたら話します。
 
    <img src="docs/recording.png" width="170" alt="音声入力中の青い波形">
 
-3. **文字を入力する。** <kbd>Page Down</kbd> をもう一度押すと、話した内容が文字になります。Windows では、音声入力を始めたときと同じ入力欄にフォーカスがあれば自動で貼り付けます。クリップボードからも貼り付けられます。
+3. **文字を入力する。** <kbd>Page Down</kbd> をもう一度押して確定し、必要に応じて貼り付けます。
 
 ## イシューの立て方
 

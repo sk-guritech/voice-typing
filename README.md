@@ -34,13 +34,11 @@ Download the v1.0.0 package for your computer, open it, and set up an API key in
 
    <img src="docs/settings.png" width="280" alt="Voice Typing settings">
 
-   The screenshot shows the lightweight build from `main`, where **Language** (表示言語) switches the UI immediately.
-
 2. **Speak.** On Windows, put the cursor where you want the text. On Linux and macOS, focus the panel. Press <kbd>Page Down</kbd> and speak when the blue waveform moves.
 
    <img src="docs/recording.png" width="170" alt="Blue waveform while dictating">
 
-3. **Enter the text.** Press <kbd>Page Down</kbd> again to turn your speech into text. On Windows, the text is pasted into the original field if it still has focus. You can also paste it from your clipboard.
+3. **Enter the text.** Press <kbd>Page Down</kbd> again to finish, then paste if needed.
 
 ## Report a problem
 
