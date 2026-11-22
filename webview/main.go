@@ -302,6 +302,7 @@ func main() {
 		Mac:        &macoptions.Options{WebviewIsTransparent: true, Preferences: &macoptions.Preferences{EnableAutoplayWithoutUserAction: macoptions.Enabled}},
 		Linux:      &linuxoptions.Options{Icon: appIcon, WindowIsTranslucent: true, WebviewGpuPolicy: linuxoptions.WebviewGpuPolicyNever},
 		OnStartup:  func(ctx context.Context) { probe.ctx = ctx },
+		OnDomReady: setupMicrophone,
 		OnShutdown: func(ctx context.Context) { probe.stopShortcut(); probe.Cancel() },
 		Bind:       []interface{}{probe},
 	})
