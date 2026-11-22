@@ -7,7 +7,7 @@
 <p align="center"><strong>ショートカットひとつで、話した言葉を文字入力。</strong></p>
 
 <p align="center">
-  <a href="https://ofuse.me/fc3f74d2"><img src="https://img.shields.io/badge/OFUSE-%E9%96%8B%E7%99%BA%E3%82%92%E5%BF%9C%E6%8F%B4-226D91?style=for-the-badge&amp;label=%E2%99%A5%20OFUSE" alt="OFUSE で Voice Typing の開発を応援する"></a>
+  <a href="https://ofuse.me/fc3f74d2/letter"><img src="https://img.shields.io/badge/OFUSE-%E9%96%8B%E7%99%BA%E3%82%92%E5%BF%9C%E6%8F%B4-226D91?style=for-the-badge&amp;label=%E2%99%A5%20OFUSE" alt="OFUSE で Voice Typing の開発を応援する"></a>
 </p>
 
 <p align="center">

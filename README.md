@@ -7,7 +7,7 @@
 <p align="center"><strong>Type with your voice using a single shortcut.</strong></p>
 
 <p align="center">
-  <a href="https://ofuse.me/fc3f74d2"><img src="https://img.shields.io/badge/OFUSE-Support%20development-226D91?style=for-the-badge&amp;label=%E2%99%A5%20OFUSE" alt="Support Voice Typing on OFUSE"></a>
+  <a href="https://ofuse.me/fc3f74d2/letter"><img src="https://img.shields.io/badge/OFUSE-Support%20development-226D91?style=for-the-badge&amp;label=%E2%99%A5%20OFUSE" alt="Support Voice Typing on OFUSE"></a>
 </p>
 
 <p align="center">
