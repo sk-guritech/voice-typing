@@ -2,8 +2,8 @@ package main
 
 /*
 #cgo LDFLAGS: -framework AVFoundation -framework WebKit
-#include <ApplicationServices/ApplicationServices.h>
 #include <stdbool.h>
+int voiceMacMissingPermissions(void);
 bool voicePlaceMacPanel(int width, int height, int windowWidth, int windowHeight,
                         bool startup, bool setupPermissions, bool english);
 */
@@ -12,7 +12,7 @@ import "C"
 const windowClassName = ""
 const fixedPanelBounds = true
 
-func pasteAccessGranted() bool { return bool(C.CGPreflightPostEventAccess()) }
+func missingMacPermissions() int { return int(C.voiceMacMissingPermissions()) }
 
 func (p *Probe) PlacePanel(width, height int, startup bool) bool {
 	p.settingsMu.Lock()

@@ -69,6 +69,15 @@ static void requestPastePermission(void) {
     }
 }
 
+enum { microphoneMissing = 1, accessibilityMissing = 2, permissionMask = microphoneMissing | accessibilityMissing };
+
+int voiceMacMissingPermissions(void) {
+    int microphone = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio] == AVAuthorizationStatusAuthorized
+        ? 0 : microphoneMissing;
+    int accessibility = CGPreflightPostEventAccess() ? 0 : accessibilityMissing;
+    return microphone | accessibility;
+}
+
 static bool relaunchForPermissions(void) {
     static bool relaunching;
     if (relaunching) {
@@ -96,7 +105,7 @@ static bool relaunchForPermissions(void) {
 @property(nonatomic) bool english;
 - (void)requestMicrophone:(id)sender;
 - (void)requestAccessibility:(id)sender;
-- (bool)refreshWithAccessibility:(bool)accessibility;
+- (void)showMissingPermissions:(int)missing;
 @end
 
 @implementation VoiceTypingPermissionActions
@@ -105,7 +114,7 @@ static bool relaunchForPermissions(void) {
     AVAuthorizationStatus status = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
     if (status == AVAuthorizationStatusNotDetermined) {
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {}];
-    } else if (status != AVAuthorizationStatusAuthorized) {
+    } else {
         NSURL *pane = [NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone"];
         [NSWorkspace.sharedWorkspace openURL:pane];
     }
@@ -115,8 +124,9 @@ static bool relaunchForPermissions(void) {
     requestPastePermission();
 }
 
-- (bool)refreshWithAccessibility:(bool)accessibility {
-    bool microphone = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio] == AVAuthorizationStatusAuthorized;
+- (void)showMissingPermissions:(int)missing {
+    bool microphone = !(missing & microphoneMissing);
+    bool accessibility = !(missing & accessibilityMissing);
     [self.microphoneButton setEnabled:!microphone];
     [self.accessibilityButton setEnabled:!accessibility];
     self.microphoneButton.title = self.english
@@ -125,15 +135,13 @@ static bool relaunchForPermissions(void) {
     self.accessibilityButton.title = self.english
         ? (accessibility ? @"Accessibility allowed" : @"Set up Accessibility")
         : (accessibility ? @"アクセシビリティは許可済み" : @"アクセシビリティを設定");
-    return microphone && accessibility;
 }
 
 @end
 
 static void showPermissionSetup(bool english) {
-    __block bool accessibilityAllowed = CGPreflightPostEventAccess();
-    if ([AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio] == AVAuthorizationStatusAuthorized &&
-        accessibilityAllowed) {
+    __block int missing = voiceMacMissingPermissions();
+    if (missing == 0) {
         return;
     }
 
@@ -143,7 +151,7 @@ static void showPermissionSetup(bool english) {
     NSButton *accessibility = [NSButton buttonWithTitle:@"" target:actions action:@selector(requestAccessibility:)];
     actions.microphoneButton = microphone;
     actions.accessibilityButton = accessibility;
-    [actions refreshWithAccessibility:accessibilityAllowed];
+    [actions showMissingPermissions:missing];
     NSStackView *controls = [NSStackView stackViewWithViews:@[microphone, accessibility]];
     controls.orientation = NSUserInterfaceLayoutOrientationVertical;
     controls.alignment = NSLayoutAttributeLeading;
@@ -162,27 +170,25 @@ static void showPermissionSetup(bool english) {
     [alert addButtonWithTitle:english ? @"Later" : @"あとで"];
     __block NSTask *probe = nil;
     NSTimer *timer = [NSTimer timerWithTimeInterval:1.5 repeats:YES block:^(NSTimer *check) {
-        bool allowedHere = CGPreflightPostEventAccess();
-        if (probe != nil && !probe.running) {
-            if (probe.terminationReason == NSTaskTerminationReasonExit && probe.terminationStatus <= 1) {
-                accessibilityAllowed = probe.terminationStatus == 0;
+        if (probe.running) {
+            return;
+        }
+        if (probe != nil) {
+            if (probe.terminationReason == NSTaskTerminationReasonExit && probe.terminationStatus <= permissionMask) {
+                missing = probe.terminationStatus;
+                [actions showMissingPermissions:missing];
             }
             [probe release];
             probe = nil;
         }
-        if (allowedHere) {
-            accessibilityAllowed = true;
-        }
-        if (![actions refreshWithAccessibility:accessibilityAllowed]) {
-            // A new process avoids the preflight result cached by the running app.
-            if (!allowedHere && probe == nil) {
-                probe = [[NSTask alloc] init];
-                probe.executableURL = NSBundle.mainBundle.executableURL;
-                probe.arguments = @[@"--check-paste-access"];
-                if (![probe launchAndReturnError:NULL]) {
-                    [probe release];
-                    probe = nil;
-                }
+        if (missing != 0) {
+            // macOS can cache permission checks in a running process.
+            probe = [[NSTask alloc] init];
+            probe.executableURL = NSBundle.mainBundle.executableURL;
+            probe.arguments = @[@"--check-mac-permissions"];
+            if (![probe launchAndReturnError:NULL]) {
+                [probe release];
+                probe = nil;
             }
             return;
         }
