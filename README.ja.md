@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="docs/social-preview.png" width="720" alt="Voice Typing。ショートカットひとつで、話した言葉を文字入力。Windows、Linux、macOS に対応。">
+  <img src="docs/social-preview-ja.png" width="720" alt="Voice Typing。ショートカットひとつで、話した言葉を文字入力。Windows、Linux、macOS に対応。">
 </h1>
 
 <p align="center">
