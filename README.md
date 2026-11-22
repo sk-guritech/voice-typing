@@ -71,6 +71,10 @@ Use Go 1.27.4 from `webview/`.
 
 </details>
 
+## Support development
+
+[Support Voice Typing on OFUSE](https://ofuse.me/fc3f74d2)
+
 ## License
 
 [MIT](LICENSE)

@@ -71,6 +71,10 @@ Go 1.27.4 を使います。以下のコマンドは `webview/` で実行しま�
 
 </details>
 
+## 開発を応援する
+
+[OFUSE で応援する](https://ofuse.me/fc3f74d2)
+
 ## ライセンス
 
 [MIT](LICENSE)
