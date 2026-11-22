@@ -384,14 +384,21 @@
       if (section.contains(document.activeElement)) throw new Error('A settings control received focus automatically');
       void backend.TraceSelfTest('Settings opened');
       const form = section.querySelector('form');
-      function checkSaveFits() {
+      function checkSettingsFit() {
         const card = section.getBoundingClientRect();
         const save = form.querySelector('[type=submit]').getBoundingClientRect();
         if (save.left < card.left || save.right > card.right || save.top < card.top || save.bottom > card.bottom) {
           throw new Error('The Save button is clipped');
         }
+        const fields = form.querySelector('.settings-fields').getBoundingClientRect();
+        for (const selector of ['#shortcut', '#capture']) {
+          const control = form.querySelector(selector).getBoundingClientRect();
+          if (control.top < fields.top || control.bottom > fields.bottom || control.left < fields.left || control.right > fields.right) {
+            throw new Error('The shortcut settings are clipped');
+          }
+        }
       }
-      checkSaveFits();
+      checkSettingsFit();
       const input = section.querySelector('#key');
       const provider = section.querySelector('#provider');
       const model = section.querySelector('#model');
@@ -410,7 +417,7 @@
         language.dispatchEvent(new Event('change'));
       }
       selectLanguage('en');
-      checkSaveFits();
+      checkSettingsFit();
       if (section.hidden || document.documentElement.lang !== 'en' ||
           section.querySelector('h1').textContent !== 'Settings' ||
           section.querySelector('#message').textContent !== 'The API key format is invalid.' ||

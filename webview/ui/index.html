@@ -33,19 +33,23 @@
             </select>
           </div>
         </div>
-        <label for="key" data-l10n="keyLabel">API キー</label>
-        <div class="row">
-          <input id="key" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="API キーを入力">
-          <button id="reveal" type="button">表示</button>
+        <div class="settings-field">
+          <label for="key" data-l10n="keyLabel">API キー</label>
+          <div class="row">
+            <input id="key" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="API キーを入力">
+            <button id="reveal" type="button">表示</button>
+          </div>
         </div>
-        <label for="shortcut" data-l10n="shortcut">ショートカット</label>
-        <div class="row">
-          <output id="shortcut" for="capture"></output>
-          <button id="capture" type="button">変更</button>
+        <div class="settings-field">
+          <label for="shortcut" data-l10n="shortcut">ショートカット</label>
+          <div class="row">
+            <output id="shortcut" for="capture"></output>
+            <button id="capture" type="button">変更</button>
+          </div>
         </div>
+        <p id="message" role="status"></p>
       </div>
       <div class="footer">
-        <p id="message" role="status"></p>
         <button type="submit" data-l10n="save">保存</button>
       </div>
     </form>
