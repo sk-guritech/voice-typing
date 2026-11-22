@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -14,8 +15,10 @@ import (
 
 const keyringService = "Voice Typing WebView"
 const defaultSonioxModel = "stt-rt-v6"
+const defaultOpenAIModel = "gpt-transcribe"
 
 var sonioxModels = []string{defaultSonioxModel, "stt-rt-v5"}
+var openAIModels = []string{defaultOpenAIModel, "gpt-4o-transcribe", "gpt-4o-mini-transcribe", "whisper-1"}
 
 var shortcutPattern = regexp.MustCompile(`^(?:(?:Command|Super|Control|Alt|Shift)\+)*(?:PageDown|PageUp|Home|End|Insert|Delete|Space|Backspace|Up|Down|Left|Right|Tab|Enter|[A-Z0-9]|F(?:[1-9]|1[0-9]|2[0-4]))$`)
 var sonioxModelPattern = regexp.MustCompile(`^stt-rt-[a-z0-9][a-z0-9._-]{0,63}$`)
@@ -23,6 +26,7 @@ var sonioxModelPattern = regexp.MustCompile(`^stt-rt-[a-z0-9][a-z0-9._-]{0,63}$`
 type Preferences struct {
 	Provider    string `json:"provider"`
 	SonioxModel string `json:"sonioxModel"`
+	OpenAIModel string `json:"openAIModel"`
 	Shortcut    string `json:"shortcut"`
 	AlwaysOnTop bool   `json:"alwaysOnTop"`
 	Language    string `json:"language"`
@@ -30,7 +34,7 @@ type Preferences struct {
 
 type SettingsForm struct {
 	Provider    string `json:"provider"`
-	SonioxModel string `json:"sonioxModel"`
+	Model       string `json:"model"`
 	Shortcut    string `json:"shortcut"`
 	AlwaysOnTop bool   `json:"alwaysOnTop"`
 	Key         string `json:"key"`
@@ -41,7 +45,10 @@ func validProvider(provider string) bool {
 }
 
 func (p *Probe) loadPreferences() {
-	p.prefs = Preferences{Provider: "soniox", SonioxModel: defaultSonioxModel, Shortcut: "PageDown", AlwaysOnTop: true, Language: "ja"}
+	p.prefs = Preferences{
+		Provider: "soniox", SonioxModel: defaultSonioxModel, OpenAIModel: defaultOpenAIModel,
+		Shortcut: "PageDown", AlwaysOnTop: true, Language: "ja",
+	}
 	if p.IsSelfTest() {
 		return
 	}
@@ -57,6 +64,9 @@ func (p *Probe) loadPreferences() {
 		if !sonioxModelPattern.MatchString(settings.SonioxModel) {
 			settings.SonioxModel = defaultSonioxModel
 		}
+		if !slices.Contains(openAIModels, settings.OpenAIModel) {
+			settings.OpenAIModel = defaultOpenAIModel
+		}
 		p.prefs = settings
 	}
 }
@@ -67,6 +77,7 @@ func (p *Probe) Config() map[string]any {
 	return map[string]any{
 		"provider": p.prefs.Provider, "shortcut": p.prefs.Shortcut,
 		"sonioxModel": p.prefs.SonioxModel, "sonioxModels": sonioxModels,
+		"openAIModel": p.prefs.OpenAIModel, "openAIModels": openAIModels,
 		"alwaysOnTop": p.prefs.AlwaysOnTop, "canKeepAbove": true,
 		"language":       p.prefs.Language,
 		"globalShortcut": p.shortcut != nil && p.shortcutError == "",
@@ -136,15 +147,20 @@ func (p *Probe) Save(form SettingsForm) map[string]any {
 	settings.Provider = form.Provider
 	settings.Shortcut = form.Shortcut
 	settings.AlwaysOnTop = form.AlwaysOnTop
-	if form.Provider == "soniox" {
-		model := strings.TrimSpace(form.SonioxModel)
-		if model == "" {
-			model = defaultSonioxModel
+	model := strings.TrimSpace(form.Model)
+	if model != "" {
+		switch form.Provider {
+		case "soniox":
+			if !sonioxModelPattern.MatchString(model) {
+				return failure("ui.invalidSonioxModel")
+			}
+			settings.SonioxModel = model
+		case "openai":
+			if !slices.Contains(openAIModels, model) {
+				return failure("ui.invalidOpenAIModel")
+			}
+			settings.OpenAIModel = model
 		}
-		if !sonioxModelPattern.MatchString(model) {
-			return failure("ui.invalidSonioxModel")
-		}
-		settings.SonioxModel = model
 	}
 	changedShortcut := p.shortcut != nil && (settings.Shortcut != p.prefs.Shortcut || p.shortcutError != "")
 	if changedShortcut {
@@ -180,6 +196,9 @@ func (p *Probe) sessionSettings() (provider, model, key string, err error) {
 	p.settingsMu.Lock()
 	provider = p.prefs.Provider
 	model = p.prefs.SonioxModel
+	if provider == "openai" {
+		model = p.prefs.OpenAIModel
+	}
 	p.settingsMu.Unlock()
 	if p.IsSelfTest() {
 		return provider, model, "synthetic-test-credential", nil

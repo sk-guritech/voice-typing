@@ -96,7 +96,7 @@ func (p *Probe) Connect(rate int) error {
 		return errors.New("ui.alreadyConnected")
 	}
 	if provider == "openai" {
-		p.openAI = newOpenAIRecording(p.ctx, key, rate)
+		p.openAI = newOpenAIRecording(p.ctx, key, model, rate)
 		return nil
 	}
 	ctx, cancel := context.WithTimeout(p.ctx, 8*time.Second)

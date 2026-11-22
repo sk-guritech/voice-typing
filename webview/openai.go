@@ -16,18 +16,21 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+const openAITranscriptionURL = "https://api.openai.com/v1/audio/transcriptions"
+
 type openAIRecording struct {
 	ctx      context.Context
 	cancel   context.CancelFunc
 	key      string
+	model    string
 	rate     int
 	pcm      []byte
 	finished bool
 }
 
-func newOpenAIRecording(ctx context.Context, key string, rate int) *openAIRecording {
+func newOpenAIRecording(ctx context.Context, key, model string, rate int) *openAIRecording {
 	ctx, cancel := context.WithCancel(ctx)
-	return &openAIRecording{ctx: ctx, cancel: cancel, key: key, rate: rate}
+	return &openAIRecording{ctx: ctx, cancel: cancel, key: key, model: model, rate: rate}
 }
 
 func (r *openAIRecording) add(block []byte) error {
@@ -41,7 +44,7 @@ func (r *openAIRecording) add(block []byte) error {
 	return nil
 }
 
-func (r *openAIRecording) transcribe() (string, error) {
+func (r *openAIRecording) transcribe(endpoint string) (string, error) {
 	if len(r.pcm) == 0 {
 		return "", nil
 	}
@@ -61,7 +64,7 @@ func (r *openAIRecording) transcribe() (string, error) {
 	le.PutUint32(header[40:], uint32(len(r.pcm)))
 	var body bytes.Buffer
 	form := multipart.NewWriter(&body)
-	if err := form.WriteField("model", "gpt-transcribe"); err != nil {
+	if err := form.WriteField("model", r.model); err != nil {
 		return "", err
 	}
 	audio, err := form.CreateFormFile("file", "dictation.wav")
@@ -76,7 +79,7 @@ func (r *openAIRecording) transcribe() (string, error) {
 	}
 	ctx, cancel := context.WithTimeout(r.ctx, 90*time.Second)
 	defer cancel()
-	request, err := http.NewRequestWithContext(ctx, http.MethodPost, "https://api.openai.com/v1/audio/transcriptions", &body)
+	request, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, &body)
 	if err != nil {
 		return "", err
 	}
@@ -109,7 +112,7 @@ func (p *Probe) finishOpenAI(recording *openAIRecording) error {
 	p.mu.Unlock()
 	go func() {
 		defer recording.cancel()
-		text, err := recording.transcribe()
+		text, err := recording.transcribe(openAITranscriptionURL)
 		p.mu.Lock()
 		active := p.openAI == recording
 		if active {

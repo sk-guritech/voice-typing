@@ -373,15 +373,12 @@
       const form = section.querySelector('form');
       const input = section.querySelector('#key');
       const provider = section.querySelector('#provider');
-      const model = section.querySelector('#soniox-model');
-      const modelField = section.querySelector('#soniox-model-field');
-      await waitFor('Default Soniox model', () => !modelField.hidden && model.value === 'stt-rt-v6');
-      provider.value = 'openai';
-      provider.dispatchEvent(new Event('change'));
-      if (!modelField.hidden) throw new Error('OpenAI settings showed the Soniox model field');
-      provider.value = 'soniox';
-      provider.dispatchEvent(new Event('change'));
-      if (modelField.hidden) throw new Error('Soniox settings hid the model field');
+      const model = section.querySelector('#model');
+      function selectProvider(value) {
+        provider.value = value;
+        provider.dispatchEvent(new Event('change'));
+      }
+      await waitFor('Default Soniox model', () => model.value === 'stt-rt-v6');
       input.value = 'x'.repeat(2001);
       input.dispatchEvent(new Event('input'));
       form.requestSubmit();
@@ -411,6 +408,20 @@
       selectLanguage('ja');
       if (document.documentElement.lang !== 'ja') throw new Error('Selecting Japanese did not immediately translate the UI');
       await languageWrite;
+      selectProvider('openai');
+      if (model.value !== 'gpt-transcribe' ||
+          Array.from(model.options, option => option.value).join(',') !==
+            'gpt-transcribe,gpt-4o-transcribe,gpt-4o-mini-transcribe,whisper-1') {
+        throw new Error('OpenAI model dropdown options were not available');
+      }
+      model.value = 'gpt-4o-mini-transcribe';
+      form.requestSubmit();
+      await waitFor('OpenAI settings saved', () => section.hidden);
+      gear.click();
+      await waitFor('Saved OpenAI model', () => !section.hidden && provider.value === 'openai' &&
+        model.value === 'gpt-4o-mini-transcribe');
+      await settingsTransition;
+      selectProvider('soniox');
       if (model.tagName !== 'SELECT' || Array.from(model.options, option => option.value).join(',') !== 'stt-rt-v6,stt-rt-v5') {
         throw new Error('Soniox model dropdown options were not available');
       }
@@ -421,7 +432,9 @@
       }
       await waitFor('Settings closed in Japanese', () => section.hidden && document.documentElement.lang === 'ja' &&
         viewportIs(fixedViewport ? settingsSize : compact));
-      if (config.sonioxModel !== 'stt-rt-v5') throw new Error('The Soniox model was not saved');
+      if (config.sonioxModel !== 'stt-rt-v5' || config.openAIModel !== 'gpt-4o-mini-transcribe') {
+        throw new Error('The models were not saved independently');
+      }
       void backend.TraceSelfTest('Settings closed');
       if (hotkeyTest) {
         if (!config.globalShortcut) throw new Error(config.error);

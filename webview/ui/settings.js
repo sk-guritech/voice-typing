@@ -5,8 +5,8 @@ const section = document.querySelector('#settings-panel');
 const gear = document.querySelector('#open-settings');
 const form = document.querySelector('#settings');
 const provider = document.querySelector('#provider');
-const modelField = document.querySelector('#soniox-model-field');
-const model = document.querySelector('#soniox-model');
+const model = document.querySelector('#model');
+const legacyModels = document.createElement('optgroup');
 const language = document.querySelector('#language');
 const alwaysOnTop = document.querySelector('#always-on-top');
 const key = document.querySelector('#key');
@@ -20,13 +20,30 @@ let changing = 0;
 let opening = 0;
 let keyPresent = false;
 let messageCode = '';
+let modelOptions;
+let selectedModels;
 
 function renderControls() {
+  legacyModels.label = settingsText('legacyModels');
   key.placeholder = settingsText(keyPresent ? 'keySaved' : 'keyPlaceholder');
   reveal.textContent = settingsText(key.type === 'text' ? 'hide' : 'show');
   shortcut.textContent = capturing ? settingsText('pressKey') : selectedShortcut;
   capture.textContent = settingsText(capturing ? 'cancel' : 'change');
   message.textContent = settingsLocale.error(messageCode);
+}
+
+function renderModels() {
+  if (!modelOptions) return;
+  const service = provider.value;
+  const options = modelOptions[service].map(id => new Option(id, id));
+  if (service === 'openai') {
+    const [current, ...legacy] = options;
+    legacyModels.replaceChildren(...legacy);
+    model.replaceChildren(current, legacyModels);
+  } else {
+    model.replaceChildren(...options);
+  }
+  model.value = selectedModels[service];
 }
 
 function showMessage(code = '') {
@@ -69,11 +86,12 @@ reveal.addEventListener('click', async () => {
 });
 key.addEventListener('input', () => { key.dataset.edited = 'yes'; });
 provider.addEventListener('change', () => {
-  modelField.hidden = provider.value !== 'soniox';
+  renderModels();
   delete key.dataset.edited;
   showMessage();
   void refreshKey();
 });
+model.addEventListener('change', () => { selectedModels[provider.value] = model.value; });
 language.addEventListener('change', () => settingsApi.setLanguage(language.value));
 settingsApi.onLanguage(value => {
   language.value = value;
@@ -124,7 +142,7 @@ form.addEventListener('submit', async event => {
   try {
     const result = await settingsApi.save({
       provider: chosen,
-      sonioxModel: model.value,
+      model: model.value,
       shortcut: selectedShortcut,
       alwaysOnTop: alwaysOnTop.checked,
       key: key.dataset.edited ? key.value : '',
@@ -143,10 +161,12 @@ async function load(request) {
   const config = await settingsApi.config();
   if (!config || request !== opening) return;
   provider.value = config.provider;
-  const modelIds = new Set([...config.sonioxModels, config.sonioxModel]);
-  model.replaceChildren(...Array.from(modelIds, id => new Option(id, id)));
-  model.value = config.sonioxModel;
-  modelField.hidden = provider.value !== 'soniox';
+  modelOptions = {
+    soniox: [...new Set([...config.sonioxModels, config.sonioxModel])],
+    openai: config.openAIModels,
+  };
+  selectedModels = { soniox: config.sonioxModel, openai: config.openAIModel };
+  renderModels();
   alwaysOnTop.checked = config.alwaysOnTop;
   alwaysOnTop.disabled = !config.canKeepAbove;
   selectedShortcut = config.shortcut;
