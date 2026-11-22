@@ -1,0 +1,117 @@
+:root { color-scheme: light dark; font: 14px 'Yu Gothic UI', 'Hiragino Sans', system-ui, sans-serif; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+.panel-document { background: transparent; }
+.panel {
+  --panel-bg: #f8fafc;
+  --panel-text: #223348;
+  --panel-field: #fff;
+  --panel-border: #cbd5e1;
+  --panel-icon: #45566b;
+  --panel-hover: #e5edf6;
+  --panel-focus: #245fa0;
+  --panel-progress: #826018;
+  --panel-success: #116a58;
+  --panel-error: #a63742;
+  --panel-wave: #2767af;
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 7px 8px 10px;
+  user-select: none;
+}
+@media (prefers-color-scheme: dark) {
+  .panel {
+    --panel-bg: #252d38;
+    --panel-text: #eef3f9;
+    --panel-field: #303b49;
+    --panel-border: #526072;
+    --panel-icon: #e0e8f2;
+    --panel-hover: #394655;
+    --panel-focus: #9fcaff;
+    --panel-progress: #e9d3a4;
+    --panel-success: #a9edc6;
+    --panel-error: #ffc6ae;
+    --panel-wave: #9fcaff;
+  }
+}
+.floating-panel {
+  display: grid;
+  flex: none;
+  width: 164px;
+  height: 52px;
+  box-sizing: border-box;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  background: var(--panel-bg);
+  box-shadow: 0 3px 7px rgb(16 25 38 / 24%);
+  -webkit-app-region: drag;
+}
+#status {
+  height: 36px;
+  display: grid;
+  place-items: center;
+  color: var(--panel-icon);
+  font: 20px 'Segoe UI Symbol', system-ui, sans-serif;
+}
+#status[data-state=connecting], #status[data-state=finishing] { color: var(--panel-progress); }
+#status[data-state=pasted], #status[data-state=copied] { color: var(--panel-success); }
+#status[data-state=error] { color: var(--panel-error); }
+#wave { display: flex; height: 34px; align-items: center; gap: 4px; }
+#wave i { width: 4px; height: 32px; transform: scaleY(0.125); border-radius: 4px; background: var(--panel-wave); }
+.panel-actions { padding-left: 6px; border-left: 1px solid var(--panel-border); }
+#open-settings {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--panel-icon);
+  font: 21px 'Segoe UI Symbol', 'Apple Symbols', system-ui, sans-serif;
+  line-height: 1;
+  -webkit-app-region: no-drag;
+}
+#open-settings:hover { background: var(--panel-hover); }
+#open-settings[aria-expanded=true] { background: var(--panel-hover); }
+#open-settings:focus-visible { outline-offset: -2px; }
+.inline-settings {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 12px 16px;
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  background: var(--panel-bg);
+  color: var(--panel-text);
+  box-shadow: 0 3px 7px rgb(16 25 38 / 24%);
+}
+.settings-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+h1 { font-size: 17px; margin: 0; }
+.keep-above { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 13px; }
+.keep-above input { width: 16px; height: 16px; min-height: 0; margin: 0; accent-color: var(--panel-focus); }
+.keep-above input:disabled + span { color: var(--panel-icon); }
+form { display: grid; gap: 6px; }
+label { margin-top: 7px; font-weight: 600; }
+input, select, output, button { font: inherit; color: inherit; }
+input, select, output, button { background: var(--panel-field); border: 1px solid var(--panel-border); border-radius: 6px; min-height: 35px; box-sizing: border-box; padding: 5px 10px; }
+button { cursor: pointer; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--panel-focus); outline-offset: 2px; }
+.row { display: flex; gap: 8px; }
+.row > :first-child { flex: 1; min-width: 0; }
+output { display: flex; align-items: center; }
+.footer { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-top: 12px; }
+.footer p { color: var(--panel-icon); margin: 5px 0; }
+.footer button { background: var(--panel-focus); color: var(--panel-bg); min-width: 64px; border-color: transparent; font-weight: 700; }
+button:disabled { opacity: 0.6; cursor: wait; }

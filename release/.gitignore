@@ -1,0 +1,4 @@
+# Locally built release artifacts
+/*.exe
+/*.AppImage
+/*.zip

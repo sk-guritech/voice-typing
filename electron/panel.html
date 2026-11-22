@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ja" class="panel-document">
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; worker-src 'self'">
+<title>音声入力</title>
+<link rel="stylesheet" href="style.css">
+<body class="panel">
+  <section class="inline-settings" id="settings-panel" aria-labelledby="settings-heading" hidden>
+    <header class="settings-header">
+      <h1 id="settings-heading">設定</h1>
+      <label class="keep-above">
+        <input id="always-on-top" type="checkbox" form="settings">
+        <span>常に手前に表示</span>
+      </label>
+    </header>
+    <form id="settings">
+      <label for="provider">認識サービス</label>
+      <select id="provider"><option value="soniox">Soniox</option><option value="openai">OpenAI</option></select>
+      <label for="key">API キー</label>
+      <div class="row">
+        <input id="key" type="password" autocomplete="off" spellcheck="false" autocapitalize="off" placeholder="API キーを入力">
+        <button id="reveal" type="button">表示</button>
+      </div>
+      <label for="shortcut">ショートカット</label>
+      <div class="row">
+        <output id="shortcut" for="capture"></output>
+        <button id="capture" type="button">変更</button>
+      </div>
+      <div class="footer">
+        <p id="message" role="status"></p>
+        <button type="submit">保存</button>
+      </div>
+    </form>
+  </section>
+  <main class="floating-panel" aria-label="音声入力">
+    <div id="status" role="img" aria-label="待機中">
+      <span id="symbol" aria-hidden="true">○</span>
+      <span id="wave" aria-hidden="true" hidden><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+    </div>
+    <div class="panel-actions">
+      <button id="open-settings" type="button" aria-label="音声入力の設定" aria-controls="settings-panel" aria-expanded="false">
+        <span aria-hidden="true">⚙︎</span>
+      </button>
+    </div>
+  </main>
+  <script src="panel.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>

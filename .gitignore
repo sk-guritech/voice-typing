@@ -1,0 +1,19 @@
+# Dependencies and Electron build output
+/node_modules/
+/dist/
+npm-debug.log*
+
+# Local credentials
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.key
+*.key.enc
+*.p12
+*.pfx
+
+# OS metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
