@@ -15,13 +15,13 @@
 
 Build locally using the commands below. The packages go in [`release/`](release/).
 
-| OS | Requirements | Launch |
-| --- | --- | --- |
-| Windows x64 | WebView2 Runtime | Run the `.exe`. |
-| Linux x64 | GTK 3 and WebKitGTK 4.1 | Extract the `.tar.gz` and run `voice-typing`. |
-| macOS (Apple Silicon or Intel) | macOS 13 or later | Extract the ZIP and open `Voice Typing.app`. |
+| OS | Requirements | Launch | Tested on a desktop |
+| --- | --- | --- | --- |
+| Windows x64 | WebView2 Runtime | Run the `.exe`. | ○ Verified |
+| Linux x64 | GTK 3 and WebKitGTK 4.1 | Extract the `.tar.gz` and run `voice-typing`. | × Unverified (Ubuntu container tested) |
+| macOS (Apple Silicon or Intel) | macOS 13 or later | Extract the ZIP and open `Voice Typing.app`. | × Unverified on a physical Mac |
 
-The macOS app is ad hoc signed and awaits testing on a physical Mac.
+The macOS app is ad hoc signed.
 
 ## Quick start
 
@@ -34,6 +34,10 @@ The macOS app is ad hoc signed and awaits testing on a physical Mac.
    <img src="docs/recording.png" width="170" alt="Blue waveform during recording">
 
 3. **Get the text.** Press <kbd>Page Down</kbd> again. When recording starts with the shortcut on Windows, the result is pasted into the original field if it still has focus. You can also paste the result from your clipboard.
+
+## Report a problem
+
+Include your OS, Voice Typing version, what you did, and what happened. Remove API keys and personal information from screenshots and logs before sharing. [Open a GitHub issue](https://github.com/sk-guritech/voice-typing/issues/new)
 
 <details>
 <summary>Build locally</summary>

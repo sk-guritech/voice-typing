@@ -15,13 +15,13 @@
 
 下の手順でビルドすると、配布ファイルが [`release/`](release/) に入ります。
 
-| OS | 必要な環境 | 起動方法 |
-| --- | --- | --- |
-| Windows x64 | WebView2 Runtime | `.exe` を起動します。 |
-| Linux x64 | GTK 3、WebKitGTK 4.1 | `.tar.gz` を展開し、`voice-typing` を起動します。 |
-| macOS（Apple Silicon / Intel） | macOS 13 以降 | ZIP を展開し、`Voice Typing.app` を開きます。 |
+| OS | 必要な環境 | 起動方法 | 実環境での動作確認 |
+| --- | --- | --- | --- |
+| Windows x64 | WebView2 Runtime | `.exe` を起動します。 | ○ 確認済み |
+| Linux x64 | GTK 3、WebKitGTK 4.1 | `.tar.gz` を展開し、`voice-typing` を起動します。 | × 未確認（Ubuntu コンテナで確認済み） |
+| macOS（Apple Silicon / Intel） | macOS 13 以降 | ZIP を展開し、`Voice Typing.app` を開きます。 | × Mac 実機で未確認 |
 
-macOS 版はアドホック署名済みで、Mac 実機での動作は未確認です。
+macOS 版はアドホック署名済みです。
 
 ## 使い方
 
@@ -34,6 +34,10 @@ macOS 版はアドホック署名済みで、Mac 実機での動作は未確認�
    <img src="docs/recording.png" width="170" alt="録音中の青い波形">
 
 3. **文字を入力する。** <kbd>Page Down</kbd> をもう一度押します。Windows でショートカットから録音し、同じ入力欄にフォーカスがあれば自動で貼り付けます。結果はクリップボードからも貼り付けられます。
+
+## イシューの立て方
+
+OS、アプリのバージョン、問題が起きた手順と結果を書いてください。画像やログを添える場合は、API キーや個人情報を消してください。[GitHub でイシューを作る](https://github.com/sk-guritech/voice-typing/issues/new)
 
 <details>
 <summary>ローカルビルド</summary>
