@@ -5,7 +5,6 @@
 <h1 align="center">Voice Typing</h1>
 
 <p align="center"><strong>ショートカットひとつで、話した言葉を文字入力。</strong></p>
-<p align="center">メモやメールなど、普段使っているアプリで音声入力できます。</p>
 
 <p align="center">
   <a href="#準備">準備</a> · <a href="#ダウンロードと起動">ダウンロード</a> · <a href="#使い方">3ステップで使う</a> · <a href="README.md">English</a>

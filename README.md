@@ -5,7 +5,6 @@
 <h1 align="center">Voice Typing</h1>
 
 <p align="center"><strong>Type with your voice using a single shortcut.</strong></p>
-<p align="center">Dictate notes and emails in the apps you use every day.</p>
 
 <p align="center">
   <a href="#get-an-api-key">Get an API key</a> · <a href="#download-and-run">Download and run</a> · <a href="#quick-start">Quick start</a> · <a href="README.ja.md">日本語</a>
