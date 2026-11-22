@@ -90,7 +90,6 @@
         if (!settingsOpen || !section.hidden) return;
         callbacks.visibility?.(true);
         await animateSettings(true);
-        if (settingsOpen) section.querySelector('#provider').focus({ preventScroll: true });
       } else {
         if (!section.hidden) {
           gear.focus();
@@ -340,6 +339,9 @@
       if (!reduceMotion.matches) {
         await waitFor('Settings opening animation', () => section.getAnimations().some(animation => animation.effect.getKeyframes()[0].opacity === '0'));
       }
+      await settingsTransition;
+      if (fixedViewport) await new Promise(resolve => setTimeout(resolve, 250));
+      if (section.contains(document.activeElement)) throw new Error('A settings control received focus automatically');
       void backend.TraceSelfTest('Settings opened');
       const form = section.querySelector('form');
       const input = section.querySelector('#key');

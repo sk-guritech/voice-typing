@@ -17,12 +17,14 @@ Open the build for your OS in [`release/`](release/).
 ## Use
 
 1. Open the gear, pick a service, enter its API key, and click **Save** (保存).
+
+   <img src="docs/settings.png" width="280" alt="Voice Typing settings">
+
 2. Put the cursor in the target field on Windows. On Linux and macOS, focus the panel. Press **Page Down** and speak when the blue waveform moves.
+
+   <img src="docs/recording.png" width="170" alt="Blue waveform during recording">
+
 3. Press **Page Down** again to finish. Windows pastes into the original field if it still has focus and recording started with the shortcut. The result is also available on the clipboard.
-
-<img src="docs/settings.png" width="280" alt="Voice Typing settings"> <img src="docs/recording.png" width="170" alt="Blue waveform during recording">
-
-Windows app screenshots. The recording example uses a test tone.
 
 <details>
 <summary>Build locally</summary>

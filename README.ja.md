@@ -17,12 +17,14 @@ Soniox または OpenAI で音声を文字にします。
 ## 使い方
 
 1. 歯車を開き、認識サービスを選んで API キーを入力し、**保存**します。
+
+   <img src="docs/settings.png" width="280" alt="Voice Typing の設定画面">
+
 2. Windows は入力欄にカーソルを置き、Linux・macOS はパネルにフォーカスを置きます。**Page Down** を押し、青い波形が動いたら話します。
+
+   <img src="docs/recording.png" width="170" alt="録音中の青い波形">
+
 3. **Page Down** をもう一度押すと確定します。Windows でショートカットから録音し、同じ入力欄にフォーカスがあれば自動で貼り付けます。結果はクリップボードからも貼り付けられます。
-
-<img src="docs/settings.png" width="280" alt="Voice Typing の設定画面"> <img src="docs/recording.png" width="170" alt="録音中の青い波形">
-
-Windows 版の実画面です。録音例はテスト用の合成音で撮影しました。
 
 <details>
 <summary>ローカルビルド</summary>
