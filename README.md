@@ -1,18 +1,14 @@
+<h1 align="center">
+  <img src="docs/social-preview.png" width="720" alt="Voice Typing — Type with your voice using a single shortcut on Windows, Linux, and macOS.">
+</h1>
+
 <p align="center">
-  <img src="webview/assets/icon.png" width="104" height="104" alt="Voice Typing icon">
+  <a href="#get-an-api-key">Get an API key</a> · <a href="#download-and-run">Download and run</a> · <a href="#quick-start">Quick start</a> · <a href="#models-and-pricing">Models and pricing</a> · <a href="README.ja.md">日本語</a>
 </p>
-
-<h1 align="center">Voice Typing</h1>
-
-<p align="center"><strong>Type with your voice using a single shortcut.</strong></p>
 
 <p align="center">
   <a href="https://ko-fi.com/skguritech"><img src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" width="191" height="48" alt="Support Voice Typing on Ko-fi"></a>
   <a href="https://ofuse.me/fc3f74d2/letter"><img src="docs/ofuse-support.png" width="191" height="48" alt="Support Voice Typing on OFUSE"></a>
-</p>
-
-<p align="center">
-  <a href="#get-an-api-key">Get an API key</a> · <a href="#download-and-run">Download and run</a> · <a href="#quick-start">Quick start</a> · <a href="#models-and-pricing">Models and pricing</a> · <a href="README.ja.md">日本語</a>
 </p>
 
 ## Get an API key

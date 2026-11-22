@@ -1,18 +1,14 @@
+<h1 align="center">
+  <img src="docs/social-preview.png" width="720" alt="Voice Typing。ショートカットひとつで、話した言葉を文字入力。Windows、Linux、macOS に対応。">
+</h1>
+
 <p align="center">
-  <img src="webview/assets/icon.png" width="104" height="104" alt="Voice Typing のアイコン">
+  <a href="#準備">準備</a> · <a href="#ダウンロードと起動">ダウンロード</a> · <a href="#使い方">3ステップで使う</a> · <a href="#モデルと料金">モデルと料金</a> · <a href="README.md">English</a>
 </p>
-
-<h1 align="center">Voice Typing</h1>
-
-<p align="center"><strong>ショートカットひとつで、話した言葉を文字入力。</strong></p>
 
 <p align="center">
   <a href="https://ko-fi.com/skguritech"><img src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" width="191" height="48" alt="Ko-fi で Voice Typing の開発を応援する"></a>
   <a href="https://ofuse.me/fc3f74d2/letter"><img src="docs/ofuse-support.png" width="191" height="48" alt="OFUSE で Voice Typing の開発を応援する"></a>
-</p>
-
-<p align="center">
-  <a href="#準備">準備</a> · <a href="#ダウンロードと起動">ダウンロード</a> · <a href="#使い方">3ステップで使う</a> · <a href="#モデルと料金">モデルと料金</a> · <a href="README.md">English</a>
 </p>
 
 ## 準備
