@@ -62,6 +62,10 @@ func foregroundInput() inputTarget {
 	return target
 }
 
+func pasteTranscript(target *trackedTarget, text string) bool {
+	return target != nil && target.paste(text)
+}
+
 func (target windowsInputTarget) focused() bool { return currentWindowsInput() == target }
 
 func (target windowsInputTarget) keysHeld() bool {

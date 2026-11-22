@@ -76,7 +76,7 @@ func (p *Probe) publishResult(text string) {
 			runtime.EventsEmit(p.ctx, "probe:error", "ui.clipboard")
 			return
 		}
-		pasted = target != nil && target.paste(text)
+		pasted = pasteTranscript(target, text)
 	}
 	if p.IsSelfTest() && text == testTranscript {
 		if p.testPaste && !pasted {
