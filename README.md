@@ -39,7 +39,7 @@ Download the file for your computer, open it, and set up an API key in the gear 
 
    <img src="docs/recording.png" width="170" alt="Blue waveform while dictating">
 
-3. **Enter the text.** Press <kbd>Page Down</kbd> again to finish, then paste if needed.
+3. **Enter the text.** Press <kbd>Page Down</kbd> again to turn your speech into text.
 
 ## Report a problem
 
