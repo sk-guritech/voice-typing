@@ -15,8 +15,10 @@
 
 Create a key for the speech recognition service you want to use.
 
-- **Soniox** — Sign in, select a project, and create a key under **API keys**. [Soniox Console](https://console.soniox.com/)
-- **OpenAI** — Sign in, choose **Create new secret key**, and copy the key. [OpenAI API keys](https://platform.openai.com/api-keys)
+| Service | Where to get a key | Steps |
+| --- | --- | --- |
+| Soniox | [Soniox Console](https://console.soniox.com/) | Sign in, select a project, and create a key under **API keys**. |
+| OpenAI | [OpenAI API keys](https://platform.openai.com/api-keys) | Sign in, choose **Create new secret key**, and copy the key. |
 
 ## Download and run
 

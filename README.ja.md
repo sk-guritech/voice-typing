@@ -15,8 +15,10 @@
 
 使いたい認識サービスの API キーを取得します。
 
-- **Soniox** — ログイン後、プロジェクトを選び、**API keys** でキーを作成します。[Soniox Console](https://console.soniox.com/)
-- **OpenAI** — ログイン後、**Create new secret key** を選び、発行されたキーをコピーします。[OpenAI API keys](https://platform.openai.com/api-keys)
+| サービス | 取得先 | 取得手順 |
+| --- | --- | --- |
+| Soniox | [Soniox Console](https://console.soniox.com/) | ログイン後、プロジェクトを選び、**API keys** でキーを作成します。 |
+| OpenAI | [OpenAI API keys](https://platform.openai.com/api-keys) | ログイン後、**Create new secret key** を選び、発行されたキーをコピーします。 |
 
 ## ダウンロードと起動
 
