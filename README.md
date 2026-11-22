@@ -43,7 +43,7 @@ Dictation with a physical microphone and automatic typing were tested on an Inte
 
    <img src="docs/recording.png" width="170" alt="Blue waveform while dictating">
 
-3. **Enter the text.** Press <kbd>Page Down</kbd> again to enter what you said.
+3. **Enter the text.** Press <kbd>Page Down</kbd> again. The text goes into the input field focused when the result is ready.
 
 ### macOS permissions
 

@@ -19,9 +19,7 @@ import (
 
 var macInputAccessPrompt sync.Once
 
-func foregroundInput() inputTarget { return nil }
-
-func pasteTranscript(_ *trackedTarget, text string) bool {
+func pasteTranscript(text string) bool {
 	if !bool(C.CGPreflightPostEventAccess()) {
 		macInputAccessPrompt.Do(func() { C.voiceMacPromptForInputAccess() })
 		return false

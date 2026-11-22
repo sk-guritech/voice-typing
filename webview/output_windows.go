@@ -12,6 +12,7 @@ var (
 	getGUIThreadInfo    = panelUser32.NewProc("GetGUIThreadInfo")
 	getAsyncKeyState    = panelUser32.NewProc("GetAsyncKeyState")
 	sendKeyboardInput   = panelUser32.NewProc("SendInput")
+	postWindowMessage   = panelUser32.NewProc("PostMessageW")
 )
 
 type guiThreadInfo struct {
@@ -62,8 +63,8 @@ func foregroundInput() inputTarget {
 	return target
 }
 
-func pasteTranscript(target *trackedTarget, text string) bool {
-	return target != nil && target.paste(text)
+func pasteTranscript(text string) bool {
+	return pasteIntoForeground(foregroundInput, text)
 }
 
 func (target windowsInputTarget) focused() bool { return currentWindowsInput() == target }
@@ -77,16 +78,29 @@ func (target windowsInputTarget) keysHeld() bool {
 	return false
 }
 
+func windowsInputClass(handle uintptr) string {
+	var name [128]uint16
+	panelWindowClass.Call(handle, uintptr(unsafe.Pointer(&name[0])), uintptr(len(name)))
+	return strings.ToLower(windows.UTF16ToString(name[:]))
+}
+
 func (target windowsInputTarget) paste(text string) bool {
 	if target.keysHeld() || !target.focused() {
 		return false
 	}
-	var name [128]uint16
-	panelWindowClass.Call(target.window, uintptr(unsafe.Pointer(&name[0])), uintptr(len(name)))
-	switch windows.UTF16ToString(name[:]) {
-	case "CASCADIA_HOSTING_WINDOW_CLASS", "ConsoleWindowClass":
+	switch windowsInputClass(target.window) {
+	case "cascadia_hosting_window_class", "consolewindowclass":
 		if strings.ContainsFunc(text, func(r rune) bool { return r < 0x20 || r == 0x7f }) {
 			return false
+		}
+	}
+	// Native edit controls can accept a paste message directly.
+	focusClass := windowsInputClass(target.focus)
+	if focusClass == "edit" || strings.HasPrefix(focusClass, "richedit") ||
+		strings.HasPrefix(focusClass, "windowsforms10.edit.") || strings.HasPrefix(focusClass, "windowsforms10.richedit") {
+		const wmPaste = 0x0302
+		if ok, _, _ := postWindowMessage.Call(target.focus, wmPaste, 0, 0); ok != 0 {
+			return true
 		}
 	}
 	const keyboard = 1

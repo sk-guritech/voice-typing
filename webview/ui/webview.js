@@ -147,7 +147,7 @@
     setState('error');
   }
 
-  function toggle(fromShortcut = false) {
+  function toggle() {
     if (current) {
       if (state === 'finishing') return;
       setState('finishing');
@@ -160,12 +160,7 @@
     lastError = '';
     setState('connecting');
     timeout = setTimeout(() => fail('ui.micTimeout'), 20000);
-    const start = () => { if (current === task) callbacks.start?.(task.id); };
-    if (fromShortcut) {
-      void backend.CaptureTarget().then(start).catch(error => {
-        if (current === task) fail(error);
-      });
-    } else start();
+    callbacks.start?.(task.id);
   }
 
   function queue(task, operation) {
@@ -320,7 +315,7 @@
       waveformSeen = !document.querySelector('#wave').hidden &&
         Boolean(document.querySelector('#wave i').style.transform);
     }
-    toggle(true);
+    toggle();
   });
   native.EventsOn('probe:error', message => { if (current) fail(message); });
   native.EventsOn('probe:result', (text, pasted) => {

@@ -10,73 +10,35 @@ import (
 const testTranscript = "音声合成テスト"
 
 type inputTarget interface {
-	focused() bool
 	keysHeld() bool
 	paste(string) bool
 }
 
-type trackedTarget struct {
-	inputTarget
-	done chan struct{}
-}
-
-func (p *Probe) CaptureTarget() {
-	p.takeTarget()
-	if target := foregroundInput(); target != nil {
-		watch := &trackedTarget{inputTarget: target, done: make(chan struct{})}
-		p.outputMu.Lock()
-		p.target = watch
-		p.outputMu.Unlock()
-		go p.watchTarget(watch)
-	}
-}
-
-func (p *Probe) watchTarget(target *trackedTarget) {
-	ticker := time.NewTicker(35 * time.Millisecond)
-	defer ticker.Stop()
+func pasteIntoForeground(foreground func() inputTarget, text string) bool {
+	deadline := time.Now().Add(1500 * time.Millisecond)
 	for {
-		select {
-		case <-target.done:
-			return
-		case <-ticker.C:
-			if !target.focused() {
-				p.outputMu.Lock()
-				if p.target == target {
-					p.target = nil
-				}
-				p.outputMu.Unlock()
-				return
-			}
+		target := foreground()
+		if target == nil {
+			return false
 		}
+		if !target.keysHeld() {
+			return target.paste(text)
+		}
+		if time.Now().After(deadline) {
+			return false
+		}
+		time.Sleep(30 * time.Millisecond)
 	}
-}
-
-func (p *Probe) takeTarget() *trackedTarget {
-	p.outputMu.Lock()
-	defer p.outputMu.Unlock()
-	target := p.target
-	if target != nil {
-		close(target.done)
-		p.target = nil
-	}
-	return target
 }
 
 func (p *Probe) publishResult(text string) {
-	target := p.takeTarget()
 	pasted := false
 	if text != "" && (!p.IsSelfTest() || p.testPaste) {
-		if target != nil {
-			deadline := time.Now().Add(1500 * time.Millisecond)
-			for target.focused() && target.keysHeld() && time.Now().Before(deadline) {
-				time.Sleep(30 * time.Millisecond)
-			}
-		}
 		if err := runtime.ClipboardSetText(p.ctx, text); err != nil {
 			runtime.EventsEmit(p.ctx, "probe:error", "ui.clipboard")
 			return
 		}
-		pasted = pasteTranscript(target, text)
+		pasted = pasteTranscript(text)
 	}
 	if p.IsSelfTest() && text == testTranscript {
 		if p.testPaste && !pasted {

@@ -64,8 +64,8 @@ func foregroundInput() inputTarget {
 	return target
 }
 
-func pasteTranscript(target *trackedTarget, text string) bool {
-	return target != nil && target.paste(text)
+func pasteTranscript(text string) bool {
+	return pasteIntoForeground(foregroundInput, text)
 }
 
 func (target x11InputTarget) focused() bool {

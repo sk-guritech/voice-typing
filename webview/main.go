@@ -48,8 +48,6 @@ type Probe struct {
 	shortcutError string
 	testHotkey    bool
 	testPaste     bool
-	outputMu      sync.Mutex
-	target        *trackedTarget
 }
 
 func (p *Probe) IsSelfTest() bool { return p.testLog != "" }
@@ -145,7 +143,6 @@ func (p *Probe) Finish() error {
 }
 
 func (p *Probe) Cancel() {
-	p.takeTarget()
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if p.socket != nil {
