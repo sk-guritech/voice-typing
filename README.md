@@ -70,3 +70,7 @@ Use Go 1.27.4 from `webview/`.
 - **macOS (macOS 13 or later)** — Run `bash build-macos.sh` on a Mac with Apple command line tools installed.
 
 </details>
+
+## License
+
+[MIT](LICENSE)

@@ -70,3 +70,7 @@ Go 1.27.4 を使います。以下のコマンドは `webview/` で実行しま�
 - **macOS（macOS 13 以降）** — Apple のコマンドラインツールが入った Mac で `bash build-macos.sh` を実行します。
 
 </details>
+
+## ライセンス
+
+[MIT](LICENSE)
