@@ -143,6 +143,8 @@ async function load(request) {
   const config = await settingsApi.config();
   if (!config || request !== opening) return;
   provider.value = config.provider;
+  const modelIds = new Set([...config.sonioxModels, config.sonioxModel]);
+  model.replaceChildren(...Array.from(modelIds, id => new Option(id, id)));
   model.value = config.sonioxModel;
   modelField.hidden = provider.value !== 'soniox';
   alwaysOnTop.checked = config.alwaysOnTop;

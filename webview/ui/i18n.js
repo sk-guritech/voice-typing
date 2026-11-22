@@ -39,7 +39,7 @@ window.voiceLocale = (() => {
     micUnavailable: ['マイクを開けませんでした。マイクへのアクセスを確認してください。', 'Could not open the microphone. Check microphone access.'],
     credentialStore: ['保存した API キーを読み込めませんでした。', 'Could not read the saved API key.'],
     invalidSettings: ['設定の内容が正しくありません。', 'Check the settings and try again.'],
-    invalidSonioxModel: ['stt-rt- で始まる Soniox のモデル ID を入力してください。', 'Enter a Soniox model ID that starts with stt-rt-.'],
+    invalidSonioxModel: ['Soniox のリアルタイムモデルを選んでください。', 'Select a Soniox real-time model.'],
     invalidKey: ['API キーの形式が正しくありません。', 'The API key format is invalid.'],
     saveKey: ['API キーを保存できませんでした。', 'Could not save the API key.'],
     saveSettings: ['設定を保存できませんでした。', 'Could not save settings.'],

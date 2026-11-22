@@ -411,18 +411,17 @@
       selectLanguage('ja');
       if (document.documentElement.lang !== 'ja') throw new Error('Selecting Japanese did not immediately translate the UI');
       await languageWrite;
-      model.value = 'stt-async-v6';
-      form.requestSubmit();
-      await waitFor('Async model rejected', () => !section.hidden &&
-        section.querySelector('#message').textContent === t('invalidSonioxModel'));
-      model.value = 'stt-rt-test';
+      if (model.tagName !== 'SELECT' || Array.from(model.options, option => option.value).join(',') !== 'stt-rt-v6,stt-rt-v5') {
+        throw new Error('Soniox model dropdown options were not available');
+      }
+      model.value = 'stt-rt-v5';
       form.requestSubmit();
       if (!reduceMotion.matches) {
         await waitFor('Settings closing animation', () => section.getAnimations().some(animation => animation.effect.getKeyframes().at(-1).opacity === '0'));
       }
       await waitFor('Settings closed in Japanese', () => section.hidden && document.documentElement.lang === 'ja' &&
         viewportIs(fixedViewport ? settingsSize : compact));
-      if (config.sonioxModel !== 'stt-rt-test') throw new Error('The Soniox model was not saved');
+      if (config.sonioxModel !== 'stt-rt-v5') throw new Error('The Soniox model was not saved');
       void backend.TraceSelfTest('Settings closed');
       if (hotkeyTest) {
         if (!config.globalShortcut) throw new Error(config.error);

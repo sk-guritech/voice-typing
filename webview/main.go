@@ -230,7 +230,7 @@ func fixture() *httptest.Server {
 		if err := conn.ReadJSON(&config); err != nil || config["audio_format"] != "pcm_s16le" || config["sample_rate"] != float64(16000) {
 			return
 		}
-		if config["model"] != "stt-rt-test" {
+		if config["model"] != "stt-rt-v5" {
 			conn.WriteJSON(map[string]any{"error_code": 400})
 			return
 		}

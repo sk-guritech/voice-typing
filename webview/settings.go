@@ -15,6 +15,8 @@ import (
 const keyringService = "Voice Typing WebView"
 const defaultSonioxModel = "stt-rt-v6"
 
+var sonioxModels = []string{defaultSonioxModel, "stt-rt-v5"}
+
 var shortcutPattern = regexp.MustCompile(`^(?:(?:Command|Super|Control|Alt|Shift)\+)*(?:PageDown|PageUp|Home|End|Insert|Delete|Space|Backspace|Up|Down|Left|Right|Tab|Enter|[A-Z0-9]|F(?:[1-9]|1[0-9]|2[0-4]))$`)
 var sonioxModelPattern = regexp.MustCompile(`^stt-rt-[a-z0-9][a-z0-9._-]{0,63}$`)
 
@@ -64,7 +66,7 @@ func (p *Probe) Config() map[string]any {
 	defer p.settingsMu.Unlock()
 	return map[string]any{
 		"provider": p.prefs.Provider, "shortcut": p.prefs.Shortcut,
-		"sonioxModel": p.prefs.SonioxModel,
+		"sonioxModel": p.prefs.SonioxModel, "sonioxModels": sonioxModels,
 		"alwaysOnTop": p.prefs.AlwaysOnTop, "canKeepAbove": true,
 		"language":       p.prefs.Language,
 		"globalShortcut": p.shortcut != nil && p.shortcutError == "",

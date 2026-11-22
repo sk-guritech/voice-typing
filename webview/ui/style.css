@@ -128,7 +128,7 @@ h1 { font-size: 17px; margin: 0; }
 form { display: grid; gap: 6px; }
 .settings-pair { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; }
 .settings-field { display: grid; gap: 6px; }
-.settings-field input { min-width: 0; }
+.settings-field select { min-width: 0; }
 label { margin-top: 7px; font-weight: 600; }
 input, select, output, button { font: inherit; color: inherit; }
 input, select, output, button { background: var(--panel-field); border: 1px solid var(--panel-border); border-radius: 6px; min-height: 35px; box-sizing: border-box; padding: 5px 10px; }
